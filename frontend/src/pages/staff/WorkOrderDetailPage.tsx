@@ -104,8 +104,8 @@ export default function WorkOrderDetailPage() {
                 <div className="space-y-2.5">
                   <p className="text-sm font-medium text-foreground">服務階段</p>
                   {GROOMING_STAGES.map((stage, i) => {
-                    // 已完成的階段：index <= curIdx（或工作單已結束時全部視為非可點）。
-                    const done = curIdx >= 0 && i <= curIdx
+                    // 已完成的階段：index <= curIdx；工作單已 Completed 時四階段全部視為完成。
+                    const done = status === "Completed" ? true : curIdx >= 0 && i <= curIdx
                     // 下一個可推進的階段＝ curIdx + 1。
                     const active = !isFinished && i === curIdx + 1
                     return (

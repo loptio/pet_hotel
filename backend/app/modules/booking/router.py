@@ -72,7 +72,7 @@ def create_booking(body: s.BookingCreateIn, principal: Principal = owner_only,
             summary="List my bookings — current + history (FR-03.4)")
 def list_bookings(status_filter: s.BookingStatus | None = Query(default=None, alias="status"),
                   principal: Principal = authenticated, db: Session = Depends(get_db)):
-    return booking_service.list_bookings(db, principal.account_id, status_filter)
+    return booking_service.list_bookings(db, principal, status_filter)
 
 
 # ----- parametric paths -----

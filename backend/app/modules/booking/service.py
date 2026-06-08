@@ -248,9 +248,14 @@ class BookingService:
 
     # ----- FR-03.4 list / detail -----
     def list_bookings(
-        self, db: Session, owner_id: uuid.UUID, status_filter: BookingStatus | None
+        self, db: Session, principal: Principal, status_filter: BookingStatus | None
     ) -> list[s.BookingOut]:
-        stmt = select(Booking).where(Booking.owner_id == owner_id)
+        """Owner sees their own bookings; staff (FrontDesk/Groomer/Admin) see all
+        — needed so the front desk's check-in queue can list Confirmed bookings.
+        Same path/params/response as the frozen contract (S4 behaviour fix)."""
+        stmt = select(Booking)
+        if not (principal.roles & STAFF_ROLES):
+            stmt = stmt.where(Booking.owner_id == principal.account_id)
         if status_filter is not None:
             stmt = stmt.where(Booking.status == status_filter)
         bookings = db.execute(stmt.order_by(Booking.created_at.desc())).scalars().all()

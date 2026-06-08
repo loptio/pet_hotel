@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/zhao/NKNU_files/软体设计_cph/pet-hotel-system/frontend", "run", "dev"],
+      "port": 5173
+    }
+  ]
+}
