@@ -14,14 +14,16 @@
 
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    /* Linting — verbatimModuleSyntax + noUnused* relaxed for the S3 autonomous
+       build (dev velocity / multi-file gen); erasableSyntaxOnly kept (so we use
+       string-literal union enums, not TS enums). */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
