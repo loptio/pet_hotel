@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飼主預約流程 · 線框稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">寵物旅館與美容預約系統 · 飼主端<span class="ver">v1 低保真線框</span></div>
+    <div class="tagline">飼主預約主流程 — 3 種結構方案探索 ｜ 對著 contracts/openapi.json 的字段與端點 ｜ 狀態用詞照狀態機</div>
+  </header>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">方案</span>
+      <div class="seg tabs" role="tablist">
+        <button data-ctrl="approach" data-v="A">A<span class="sub">分步精靈</span></button>
+        <button data-ctrl="approach" data-v="B">B<span class="sub">單頁堆疊</span></button>
+        <button data-ctrl="approach" data-v="C">C<span class="sub">服務優先</span></button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">服務</span>
+      <div class="seg">
+        <button data-ctrl="service" data-v="Lodging">住宿</button>
+        <button data-ctrl="service" data-v="Grooming">美容</button>
+      </div>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">寵物危險等級</span>
+      <div class="seg danger-seg">
+        <button data-ctrl="danger" data-v="None">無</button>
+        <button data-ctrl="danger" data-v="Low">低</button>
+        <button data-ctrl="danger" data-v="Medium">中</button>
+        <button data-ctrl="danger" data-v="High">高</button>
+      </div>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">文案語氣</span>
+      <div class="seg">
+        <button data-ctrl="tone" data-v="warm">溫馨</button>
+        <button data-ctrl="tone" data-v="concise">簡潔</button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="approach-desc" id="approachDesc"></section>
+    <div class="section-head"><h3>預約建立主流程</h3><span class="hint">← 左右捲動看完整流程 · 切換上方「危險等級」看分流結局（無/低→成功 · 中→待審 · 高→拒絕）</span></div>
+    <section class="flow-row" id="flowRow"></section>
+
+    <div class="section-head"><h3>共用畫面（不分方案，單一版本）</h3><span class="hint">登入 · 寵物檔案 · 我的預約 · 明細進度 · 取消退款</span></div>
+    <section class="flow-row" id="commonRow"></section>
+
+    <section class="legend">
+      <h3>狀態用詞對照（照 Booking / WorkOrder 狀態機）</h3>
+      <div class="wrap">
+        <span class="pill s-pending"><i class="pdot"></i>待付訂金 PendingDeposit</span>
+        <span class="pill s-pending"><i class="pdot"></i>待審核 PendingReview</span>
+        <span class="pill s-confirmed"><i class="pdot"></i>已確認 Confirmed</span>
+        <span class="pill s-confirmed"><i class="pdot"></i>已報到 CheckedIn</span>
+        <span class="pill s-progress"><i class="pdot"></i>服務中 InProgress</span>
+        <span class="pill s-done"><i class="pdot"></i>已完成 Completed</span>
+        <span class="pill s-cancel"><i class="pdot"></i>已取消 Cancelled</span>
+        <span class="pill s-cancel"><i class="pdot"></i>未到場 NoShow</span>
+        <span class="pill s-danger"><i class="pdot"></i>異常終止 Aborted</span>
+      </div>
+      <p style="margin-top:14px">
+        <b>本輪範圍：</b>飼主預約主流程的低保真探索。目的在鎖定 IA 與互動結構，未進視覺。確認方案後，下一步做「專業＋溫馨」高保真，並把色／字／圓角／間距落成 shadcn token（對接 frontend/src/index.css）。<br>
+        <b>分流規則（FR-02.8）：</b>高度 = 自動拒絕（須管理員解封）；中度 = 送出後待審核（櫃台核可）；低／無 = 報到時提醒。<br>
+        <b>訂金（FR-05.3）：</b>預估總額 30%；尾款報到日結清。<span class="mono"> 線框內金額為示意。</span>
+      </p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

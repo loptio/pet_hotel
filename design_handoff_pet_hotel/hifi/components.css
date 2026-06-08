@@ -1,0 +1,130 @@
+/* =====================================================================
+   元件庫（components）— 建立於 theme.css 的 token 之上
+   ===================================================================== */
+
+/* ---------- typography ---------- */
+.t-display{ font-size:28px; line-height:1.2; font-weight:700; letter-spacing:-.01em; }
+.t-h1{ font-size:22px; line-height:1.3; font-weight:700; letter-spacing:-.01em; }
+.t-h2{ font-size:18px; line-height:1.35; font-weight:700; }
+.t-h3{ font-size:15.5px; line-height:1.4; font-weight:600; }
+.t-body{ font-size:14px; line-height:1.6; }
+.t-sm{ font-size:12.5px; line-height:1.5; }
+.t-xs{ font-size:11px; line-height:1.45; letter-spacing:.01em; }
+.t-eyebrow{ font-size:11px; letter-spacing:.16em; font-weight:600; text-transform:uppercase; color:hsl(var(--muted-foreground)); }
+.muted{ color:hsl(var(--muted-foreground)); }
+.price{ font-family:var(--font-num); font-weight:500; }
+.strong{ font-weight:700; }
+
+/* ---------- button ---------- */
+.btn{ --bg:hsl(var(--card)); --fg:hsl(var(--foreground)); --bd:hsl(var(--border));
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  font-family:inherit; font-size:14.5px; font-weight:600; line-height:1;
+  padding:0 16px; height:44px; border-radius:var(--radius-md);
+  background:var(--bg); color:var(--fg); border:1.5px solid var(--bd);
+  cursor:pointer; transition:transform .08s ease, background .15s ease, box-shadow .15s ease; user-select:none;
+}
+.btn:active{ transform:translateY(1px) scale(.995); }
+.btn.primary{ --bg:hsl(var(--primary)); --fg:hsl(var(--primary-foreground)); --bd:hsl(var(--primary));
+  box-shadow:0 6px 16px hsl(var(--primary) / .28); }
+.btn.primary:hover{ background:hsl(var(--primary-strong)); }
+.btn.secondary{ --bg:hsl(var(--secondary)); --fg:hsl(var(--secondary-foreground)); --bd:transparent; }
+.btn.ghost{ --bg:transparent; --bd:transparent; --fg:hsl(var(--foreground)); }
+.btn.outline{ --bg:transparent; }
+.btn.danger{ --bg:transparent; --fg:hsl(var(--destructive)); --bd:hsl(var(--destructive) / .5); }
+.btn.block{ display:flex; width:100%; }
+.btn.lg{ height:50px; font-size:15.5px; border-radius:var(--radius-lg); }
+.btn.sm{ height:36px; font-size:13px; padding:0 12px; border-radius:var(--radius-sm); }
+.btn[disabled],.btn.disabled{ background:hsl(var(--muted)); color:hsl(var(--muted-foreground)); border-color:transparent; box-shadow:none; cursor:not-allowed; }
+.btn svg{ width:18px; height:18px; }
+
+/* ---------- card ---------- */
+.card{ background:hsl(var(--card)); border:1px solid hsl(var(--border)); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm); }
+.card.flat{ box-shadow:none; background:hsl(var(--muted)); border-color:transparent; }
+.card.pad{ padding:16px; }
+.card.sel{ border-color:hsl(var(--primary)); box-shadow:0 0 0 3px hsl(var(--primary) / .14); }
+.card.tap{ cursor:pointer; transition:box-shadow .15s, transform .1s, border-color .15s; }
+.card.tap:hover{ box-shadow:var(--shadow-md); }
+.card.tap:active{ transform:scale(.99); }
+
+/* ---------- input ---------- */
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field > label{ font-size:12.5px; font-weight:600; color:hsl(var(--foreground)); }
+.input{ height:46px; border:1.5px solid hsl(var(--input)); border-radius:var(--radius-md);
+  background:hsl(var(--card)); padding:0 14px; font-family:inherit; font-size:14.5px; color:hsl(var(--foreground)); width:100%; }
+.input::placeholder{ color:hsl(var(--muted-foreground) / .8); }
+.input:focus{ outline:none; border-color:hsl(var(--ring)); box-shadow:0 0 0 3px hsl(var(--ring) / .16); }
+textarea.input{ height:auto; padding:11px 14px; resize:none; line-height:1.5; }
+
+/* ---------- segmented control ---------- */
+.seg{ display:inline-flex; background:hsl(var(--muted)); border-radius:var(--radius-md); padding:3px; gap:2px; }
+.seg button{ border:0; background:transparent; font-family:inherit; font-size:13.5px; font-weight:600; color:hsl(var(--muted-foreground));
+  padding:8px 16px; border-radius:calc(var(--radius-md) - 3px); cursor:pointer; transition:.15s; }
+.seg button[aria-selected="true"]{ background:hsl(var(--card)); color:hsl(var(--foreground)); box-shadow:var(--shadow-xs); }
+
+/* ---------- choice chips ---------- */
+.chip{ display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:500;
+  padding:8px 13px; border-radius:999px; border:1.5px solid hsl(var(--border)); background:hsl(var(--card));
+  color:hsl(var(--foreground)); cursor:pointer; transition:.14s; white-space:nowrap; }
+.chip.on{ border-color:hsl(var(--primary)); background:hsl(var(--primary-soft)); color:hsl(var(--primary-strong)); }
+.chip.ghost{ border-style:dashed; color:hsl(var(--muted-foreground)); }
+
+/* ---------- status badge ---------- */
+.badge{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700;
+  padding:4px 10px; border-radius:999px; line-height:1; border:1px solid transparent; white-space:nowrap; }
+.badge .dot{ width:7px; height:7px; border-radius:50%; background:currentColor; }
+.badge.neutral{ color:hsl(var(--muted-foreground)); background:hsl(var(--muted)); }
+.badge.warn{    color:hsl(36 80% 32%); background:hsl(var(--warning-soft)); }
+.badge.success{ color:hsl(142 40% 30%); background:hsl(var(--success-soft)); }
+.badge.brand{   color:hsl(var(--primary-strong)); background:hsl(var(--primary-soft)); }
+.badge.danger{  color:hsl(6 60% 38%); background:hsl(var(--destructive-soft)); }
+.badge.info{    color:hsl(215 36% 36%); background:hsl(var(--info-soft)); }
+.badge.line{ background:transparent; border-color:currentColor; }
+
+/* ---------- alert / banner ---------- */
+.alert{ display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-md);
+  font-size:12.5px; line-height:1.55; border:1px solid; }
+.alert .ic{ width:18px; height:18px; flex:0 0 auto; margin-top:1px; }
+.alert b{ font-weight:700; }
+.alert.info{ background:hsl(var(--muted)); border-color:hsl(var(--border)); color:hsl(var(--foreground)); }
+.alert.success{ background:hsl(var(--success-soft)); border-color:hsl(var(--success)/.4); color:hsl(142 40% 26%); }
+.alert.warn{ background:hsl(var(--warning-soft)); border-color:hsl(var(--warning)/.45); color:hsl(36 80% 28%); }
+.alert.danger{ background:hsl(var(--destructive-soft)); border-color:hsl(var(--destructive)/.45); color:hsl(6 58% 36%); }
+
+/* ---------- list row ---------- */
+.row{ display:flex; align-items:center; gap:12px; }
+.between{ justify-content:space-between; }
+.list-row{ display:flex; align-items:center; gap:12px; padding:12px 14px; }
+.list-row .lead{ width:46px; height:46px; border-radius:14px; flex:0 0 auto; overflow:hidden; }
+.kv{ display:flex; justify-content:space-between; gap:12px; font-size:13.5px; }
+.kv .k{ color:hsl(var(--muted-foreground)); }
+.kv .v{ font-weight:600; }
+.hr{ height:1px; background:hsl(var(--border)); border:0; margin:0; }
+.hr.dash{ height:0; background:none; border-top:1.4px dashed hsl(var(--border)); }
+
+/* ---------- image placeholder / slot ---------- */
+.ph{ background-color:hsl(var(--muted));
+  background-image:linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--secondary)) 100%);
+  display:flex; align-items:center; justify-content:center; color:hsl(var(--muted-foreground));
+  font-family:var(--font-num); font-size:10.5px; letter-spacing:.03em; text-align:center; }
+image-slot{ display:block; border-radius:inherit; }
+
+/* ---------- avatar ---------- */
+.avatar{ border-radius:50%; overflow:hidden; flex:0 0 auto; background:hsl(var(--secondary)); }
+
+/* ---------- divider label ---------- */
+.section-label{ font-size:12.5px; font-weight:700; color:hsl(var(--muted-foreground)); letter-spacing:.02em; }
+
+/* ---------- stepper (work order stages) ---------- */
+.stepper{ display:flex; flex-direction:column; }
+.step{ display:flex; gap:12px; }
+.step .rail{ display:flex; flex-direction:column; align-items:center; }
+.step .node{ width:24px; height:24px; border-radius:50%; border:2px solid hsl(var(--border)); background:hsl(var(--card));
+  display:flex; align-items:center; justify-content:center; flex:0 0 auto; color:hsl(var(--muted-foreground)); font-size:11px; }
+.step .node.done{ background:hsl(var(--success)); border-color:hsl(var(--success)); color:#fff; }
+.step .node.now{ background:hsl(var(--primary)); border-color:hsl(var(--primary)); color:#fff; box-shadow:0 0 0 4px hsl(var(--primary)/.15); }
+.step .bar{ width:2px; flex:1; min-height:22px; background:hsl(var(--border)); }
+.step .bar.done{ background:hsl(var(--success)); }
+.step .txt{ padding:1px 0 18px; }
+.step .txt .tt{ font-size:13.5px; font-weight:600; }
+.step .txt .ss{ font-size:11.5px; color:hsl(var(--muted-foreground)); }

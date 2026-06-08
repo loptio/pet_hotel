@@ -1,0 +1,96 @@
+/* =====================================================================
+   寵物旅館與美容預約系統 — 「專業 + 溫馨」Design Tokens
+   shadcn/ui 相容（HSL，無 hsl() 包裹）→ 可直接落到 frontend/src/index.css
+   ===================================================================== */
+:root{
+  /* —— 中性（warm neutrals）—— */
+  --background: 36 38% 96.5%;       /* #f7f2ea 暖奶米底 */
+  --foreground: 25 22% 16%;         /* #2e2620 暖墨 */
+  --card: 40 50% 99.5%;             /* #fffdfa 近白暖卡 */
+  --card-foreground: 25 22% 16%;
+  --popover: 40 50% 99.5%;
+  --popover-foreground: 25 22% 16%;
+  --secondary: 33 32% 91%;          /* #ece2d6 拿鐵 */
+  --secondary-foreground: 25 25% 26%;
+  --muted: 35 28% 92.5%;            /* #efe7db */
+  --muted-foreground: 28 12% 46%;   /* #7d7064 */
+  --accent: 30 44% 88%;             /* #ecdcc9 暖強調面 */
+  --accent-foreground: 24 32% 24%;
+  --border: 32 24% 85%;             /* #e0d4c4 */
+  --input: 32 24% 85%;
+  --ring: 22 72% 52%;
+
+  /* —— 品牌主色（terracotta 暖橘）—— */
+  --primary: 22 72% 52%;            /* #d2733a */
+  --primary-foreground: 40 40% 98%;
+  --primary-soft: 26 70% 92%;       /* #f8e6d6 主色淡面 */
+  --primary-strong: 20 70% 42%;     /* hover/active */
+
+  /* —— 語意狀態（跨配色固定，保語意一致）—— */
+  --success: 142 32% 38%;           /* #41804f 低度/已確認 綠 */
+  --success-foreground: 140 40% 97%;
+  --success-soft: 140 32% 90%;
+  --warning: 36 78% 44%;            /* #c8881a 中度/待處理 琥珀 */
+  --warning-foreground: 40 50% 98%;
+  --warning-soft: 40 80% 90%;
+  --destructive: 6 64% 48%;         /* #c93f35 高度/拒絕 暖紅 */
+  --destructive-foreground: 40 40% 98%;
+  --destructive-soft: 6 62% 92%;
+  --info: 215 30% 46%;
+  --info-soft: 210 38% 92%;
+
+  --radius: 0.85rem;
+
+  /* —— 圓角階梯 —— */
+  --radius-sm: calc(var(--radius) - .45rem);
+  --radius-md: calc(var(--radius) - .25rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + .35rem);
+  --radius-2xl: calc(var(--radius) + .9rem);
+
+  /* —— 陰影（暖調、柔和）—— */
+  --shadow-xs: 0 1px 2px hsl(25 30% 20% / .06);
+  --shadow-sm: 0 1px 3px hsl(25 30% 20% / .08), 0 1px 2px hsl(25 30% 20% / .05);
+  --shadow-md: 0 4px 14px hsl(25 30% 20% / .08), 0 2px 6px hsl(25 30% 20% / .05);
+  --shadow-lg: 0 12px 34px hsl(25 30% 20% / .12), 0 6px 14px hsl(25 30% 20% / .07);
+  --shadow-hero: 0 18px 48px hsl(22 50% 30% / .22);
+
+  --font-sans: "Noto Sans TC", system-ui, -apple-system, "PingFang TC", sans-serif;
+  --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* === 配色變體（Tweaks 可切換）=== */
+:root[data-palette="forest"]{
+  --primary: 150 36% 34%;           /* #38745a 森林綠 */
+  --primary-foreground: 140 40% 98%;
+  --primary-soft: 150 30% 90%;
+  --primary-strong: 152 38% 27%;
+  --ring: 150 36% 34%;
+  --accent: 145 26% 86%;
+  --accent-foreground: 152 34% 22%;
+}
+:root[data-palette="coral"]{
+  --primary: 8 74% 58%;             /* #e35c47 珊瑚紅 */
+  --primary-foreground: 16 60% 98%;
+  --primary-soft: 12 78% 92%;
+  --primary-strong: 6 66% 48%;
+  --ring: 8 74% 58%;
+  --accent: 18 50% 89%;
+  --accent-foreground: 10 50% 28%;
+}
+
+/* === 圓角風格（Tweaks）=== */
+:root[data-round="soft"]{ --radius: 0.85rem; }
+:root[data-round="sharp"]{ --radius: 0.4rem; }
+:root[data-round="round"]{ --radius: 1.35rem; }
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.num{ font-family: var(--font-num); font-feature-settings:"tnum"; }

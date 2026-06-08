@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-palette="latte" data-round="soft">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>員工後台 · 寵物旅館</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hifi/theme.css">
+<link rel="stylesheet" href="hifi/components.css">
+<link rel="stylesheet" href="hifi/staff.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">寵</div><div class="nm">寵物旅館<small>員工後台 · v1</small></div></div>
+      <nav id="nav"></nav>
+      <div class="side-foot" id="sideFoot"></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="pt" id="pt"></div>
+        <div class="sp"></div>
+        <button class="btn danger sm" id="emergBtn" data-act="global-emergency">緊急事件</button>
+        <div style="position:relative">
+          <button class="iconbtn2" id="palBtn" title="配色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="9" r="1.3" fill="currentColor"/><circle cx="15" cy="9" r="1.3" fill="currentColor"/><circle cx="9.5" cy="15" r="1.3" fill="currentColor"/></svg></button>
+          <div id="palMenu" style="display:none;position:absolute;right:0;top:42px;background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:12px;z-index:70">
+            <div class="t-xs muted" style="margin-bottom:8px">主色配色</div>
+            <div style="display:flex;gap:8px">
+              <button data-pal="latte" aria-pressed="true" style="width:28px;height:28px;border-radius:50%;border:2px solid hsl(var(--foreground));background:#d2733a;cursor:pointer"></button>
+              <button data-pal="forest" aria-pressed="false" style="width:28px;height:28px;border-radius:50%;border:2px solid hsl(var(--border));background:#38745a;cursor:pointer"></button>
+              <button data-pal="coral" aria-pressed="false" style="width:28px;height:28px;border-radius:50%;border:2px solid hsl(var(--border));background:#e35c47;cursor:pointer"></button>
+            </div>
+          </div>
+        </div>
+        <div class="who" id="who"></div>
+      </header>
+      <div class="content"><div id="view"></div></div>
+    </main>
+  </div>
+  <button class="preview-fab" id="previewFab"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>預覽角色</button>
+  <div class="preview-menu" id="previewMenu" style="display:none">
+    <div class="t-xs" style="color:hsl(var(--muted-foreground));margin-bottom:10px;line-height:1.5"><b style="color:hsl(var(--foreground))">預覽角色</b>（僅設計展示用）<br>實際登入後角色由 RBAC 固定，使用者不可自行切換。</div>
+    <div class="role-pick" id="rolePick"></div>
+  </div>
+  <script src="hifi/image-slot.js"></script>
+  <script src="hifi/staff.js"></script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-palette="latte" data-round="soft">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System · 寵物旅館</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hifi/theme.css">
+<link rel="stylesheet" href="hifi/components.css">
+<style>
+  body{ background:hsl(35 30% 93%); }
+  .wrap{ max-width:1120px; margin:0 auto; padding:46px 30px 90px; }
+  .ds-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:8px; }
+  .ds-head .lead{ max-width:560px; }
+  .ds-head .lead p{ color:hsl(var(--muted-foreground)); font-size:14.5px; line-height:1.65; margin:10px 0 0; }
+  .switcher{ display:flex; gap:18px; flex-wrap:wrap; align-items:center; background:hsl(var(--card)); border:1px solid hsl(var(--border));
+    border-radius:var(--radius-lg); padding:12px 16px; box-shadow:var(--shadow-sm); }
+  .switcher .grp{ display:flex; flex-direction:column; gap:6px; }
+  .swatch-pick{ display:flex; gap:7px; }
+  .swatch-pick button{ width:26px; height:26px; border-radius:50%; border:2px solid hsl(var(--border)); cursor:pointer; }
+  .swatch-pick button[aria-pressed="true"]{ border-color:hsl(var(--foreground)); box-shadow:0 0 0 2px hsl(var(--card)),0 0 0 4px hsl(var(--foreground)); }
+
+  section{ margin-top:46px; }
+  .sec-title{ display:flex; align-items:baseline; gap:12px; margin-bottom:18px; padding-bottom:10px; border-bottom:1.5px solid hsl(var(--border)); }
+  .sec-title h2{ font-size:16px; margin:0; font-weight:700; }
+  .sec-title span{ font-size:12.5px; color:hsl(var(--muted-foreground)); }
+  .panel{ background:hsl(var(--card)); border:1px solid hsl(var(--border)); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-sm); }
+  .grid{ display:grid; gap:14px; }
+
+  /* palette */
+  .pal{ grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); }
+  .pchip{ border:1px solid hsl(var(--border)); border-radius:var(--radius-md); overflow:hidden; background:hsl(var(--card)); }
+  .pchip .sw{ height:64px; }
+  .pchip .meta{ padding:9px 11px; }
+  .pchip .meta .nm{ font-size:12.5px; font-weight:700; }
+  .pchip .meta .hsl{ font-family:var(--font-num); font-size:10.5px; color:hsl(var(--muted-foreground)); margin-top:2px; }
+
+  /* type scale */
+  .typ > div{ display:flex; align-items:baseline; gap:18px; padding:11px 0; border-bottom:1px dashed hsl(var(--border)); }
+  .typ > div:last-child{ border-bottom:0; }
+  .typ .tag{ width:120px; flex:0 0 auto; font-family:var(--font-num); font-size:11px; color:hsl(var(--muted-foreground)); }
+
+  .demo{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  .stack{ display:flex; flex-direction:column; gap:10px; }
+  .radii{ display:flex; gap:16px; flex-wrap:wrap; }
+  .radii .r{ width:90px; }
+  .radii .r .box{ height:60px; background:hsl(var(--primary-soft)); border:1.5px solid hsl(var(--primary)/.4); }
+  .elev{ display:flex; gap:18px; flex-wrap:wrap; }
+  .elev .e{ width:130px; height:80px; background:hsl(var(--card)); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:11.5px; color:hsl(var(--muted-foreground)); }
+  .cols2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:720px){ .cols2{ grid-template-columns:1fr; } }
+  .note{ font-size:12.5px; color:hsl(var(--muted-foreground)); line-height:1.6; }
+  .codeblock{ font-family:var(--font-num); font-size:11.5px; line-height:1.7; background:hsl(25 22% 14%); color:hsl(40 30% 88%);
+    border-radius:var(--radius-md); padding:16px 18px; overflow:auto; }
+  .codeblock .c{ color:hsl(36 40% 55%); }
+  .codeblock .p{ color:hsl(22 80% 66%); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ds-head">
+    <div class="lead">
+      <div class="t-eyebrow" style="color:hsl(var(--primary-strong))">Design System · v1</div>
+      <h1 class="t-display" style="margin:6px 0 0">專業 ✕ 溫馨</h1>
+      <p>寵物旅館與美容預約系統的設計語言。暖奶米底色、terracotta 主色、柔和圓角與陰影，帶出「把毛孩交給可信賴的人」的安心感。所有 token 以 shadcn/ui 的 HSL 變數定義，可直接落到 <span class="num">frontend/src/index.css</span>。</p>
+    </div>
+    <div class="switcher">
+      <div class="grp">
+        <span class="t-xs muted">主色配色</span>
+        <div class="swatch-pick" id="palPick">
+          <button data-palette="latte"  style="background:#d2733a" aria-pressed="true" title="奶茶暖橘"></button>
+          <button data-palette="forest" style="background:#38745a" title="森林綠"></button>
+          <button data-palette="coral"  style="background:#e35c47" title="珊瑚紅"></button>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="t-xs muted">圓角</span>
+        <div class="seg" id="roundPick">
+          <button data-round="sharp" aria-selected="false">方</button>
+          <button data-round="soft" aria-selected="true">中</button>
+          <button data-round="round" aria-selected="false">圓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALETTE -->
+  <section>
+    <div class="sec-title"><h2>色彩</h2><span>warm neutrals + terracotta + 語意狀態色</span></div>
+    <div class="panel">
+      <div class="t-eyebrow" style="margin-bottom:10px">中性 / 品牌</div>
+      <div class="grid pal" id="palGrid"></div>
+      <div class="t-eyebrow" style="margin:22px 0 10px">語意狀態（跨配色固定）</div>
+      <div class="grid pal" id="semGrid"></div>
+      <p class="note" style="margin-top:14px">語意色不隨主色變體改變，確保「綠=安全／琥珀=待處理／紅=阻斷」的認知一致。低度危險與「已確認」共用綠；中度與各種「待處理」共用琥珀；高度與「異常終止」共用紅。</p>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section>
+    <div class="sec-title"><h2>字體</h2><span>Noto Sans TC · 數字用 DM Mono（等寬對齊金額）</span></div>
+    <div class="panel typ" id="typ"></div>
+  </section>
+
+  <!-- RADIUS + ELEVATION -->
+  <section>
+    <div class="sec-title"><h2>圓角與陰影</h2><span>柔和、暖調</span></div>
+    <div class="cols2">
+      <div class="panel">
+        <div class="t-eyebrow" style="margin-bottom:14px">Radius</div>
+        <div class="radii">
+          <div class="r"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="t-xs muted" style="margin-top:6px">sm</div></div>
+          <div class="r"><div class="box" style="border-radius:var(--radius-md)"></div><div class="t-xs muted" style="margin-top:6px">md</div></div>
+          <div class="r"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="t-xs muted" style="margin-top:6px">lg（base）</div></div>
+          <div class="r"><div class="box" style="border-radius:var(--radius-xl)"></div><div class="t-xs muted" style="margin-top:6px">xl</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="t-eyebrow" style="margin-bottom:14px">Elevation</div>
+        <div class="elev">
+          <div class="e" style="box-shadow:var(--shadow-xs)">xs</div>
+          <div class="e" style="box-shadow:var(--shadow-sm)">sm</div>
+          <div class="e" style="box-shadow:var(--shadow-md)">md</div>
+          <div class="e" style="box-shadow:var(--shadow-lg)">lg</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section>
+    <div class="sec-title"><h2>基礎元件</h2><span>按鈕 · 輸入 · 分段 · 選項</span></div>
+    <div class="cols2">
+      <div class="panel">
+        <div class="t-eyebrow" style="margin-bottom:14px">Buttons</div>
+        <div class="stack">
+          <div class="demo">
+            <button class="btn primary">立即預約</button>
+            <button class="btn secondary">次要</button>
+            <button class="btn outline">外框</button>
+            <button class="btn ghost">文字</button>
+          </div>
+          <div class="demo">
+            <button class="btn danger">取消預約</button>
+            <button class="btn disabled">無法送出</button>
+            <button class="btn sm primary">小</button>
+          </div>
+          <button class="btn primary lg block">付訂金 NT$300</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="t-eyebrow" style="margin-bottom:14px">Inputs · Segmented · Chips</div>
+        <div class="stack">
+          <div class="field"><label>電子郵件</label><input class="input" placeholder="you@example.com"></div>
+          <div class="seg"><button aria-selected="true">住宿</button><button aria-selected="false">美容</button></div>
+          <div class="demo">
+            <span class="chip on">豪華房</span><span class="chip">標準房</span><span class="chip ghost">＋ 新增</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATUS SYSTEM -->
+  <section>
+    <div class="sec-title"><h2>狀態系統</h2><span>用詞與顏色照狀態機（Booking 9 態 · WorkOrder · Kennel · 疫苗 · 危險）</span></div>
+    <div class="panel">
+      <div class="t-eyebrow" style="margin-bottom:10px">Booking 預約狀態（9 態）</div>
+      <div class="demo" id="bk"></div>
+      <div class="t-eyebrow" style="margin:20px 0 10px">WorkOrder 美容工作單階段</div>
+      <div class="demo" id="wo"></div>
+      <div class="cols2" style="margin-top:20px">
+        <div><div class="t-eyebrow" style="margin-bottom:10px">Kennel 床位 · 疫苗</div><div class="demo" id="kn"></div></div>
+        <div><div class="t-eyebrow" style="margin-bottom:10px">DangerLevel 危險等級</div><div class="demo" id="dg"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALERTS / GATING -->
+  <section>
+    <div class="sec-title"><h2>提示與危險分流</h2><span>FR-02.8 高=拒絕 · 中=待審 · 低=提醒</span></div>
+    <div class="panel stack">
+      <div class="alert info"><span class="ic">ⓘ</span><span>僅顯示目前<b>可預約</b>的時段，額滿不顯示。（FR-06.2）</span></div>
+      <div class="alert success"><span class="ic">✓</span><span><b>可正常預約。</b>報到當天工作人員會收到低度危險提醒，多加留意。</span></div>
+      <div class="alert warn"><span class="ic">!</span><span><b>送出後進入「待審核」。</b>中度危險寵物的預約須由櫃台人員審核通過後才能付訂金確認。</span></div>
+      <div class="alert danger"><span class="ic">⛔</span><span><b>高度危險 — 無法線上預約。</b>系統自動拒絕，須由管理員解除封鎖後才能再次預約。</span></div>
+    </div>
+  </section>
+
+  <!-- STEPPER -->
+  <section>
+    <div class="sec-title"><h2>服務進度</h2><span>WorkOrder 四階段（FR-04.5）</span></div>
+    <div class="panel" style="max-width:420px">
+      <div class="stepper">
+        <div class="step"><div class="rail"><div class="node done">✓</div><div class="bar done"></div></div><div class="txt"><div class="tt">預檢 <span class="num t-xs muted">PreCheck</span></div><div class="ss">已完成 · 14:05</div></div></div>
+        <div class="step"><div class="rail"><div class="node done">✓</div><div class="bar done"></div></div><div class="txt"><div class="tt">洗澡 <span class="num t-xs muted">Bathing</span></div><div class="ss">已完成 · 14:32</div></div></div>
+        <div class="step"><div class="rail"><div class="node now"></div><div class="bar"></div></div><div class="txt"><div class="tt">烘乾 <span class="num t-xs muted">Drying</span></div><div class="ss">進行中…</div></div></div>
+        <div class="step"><div class="rail"><div class="node"></div></div><div class="txt"><div class="tt">剪毛 <span class="num t-xs muted">Grooming</span></div><div class="ss">等待中</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HANDOFF -->
+  <section>
+    <div class="sec-title"><h2>交付給 Claude Code</h2><span>把以下貼進 frontend/src/index.css 的 :root</span></div>
+    <div class="panel">
+      <p class="note" style="margin-bottom:12px">這些變數即 shadcn/ui 的設計 token。覆蓋現有預設（slate）即可讓整個 React App 套用「專業＋溫馨」主題；語意狀態色（success/warning）為本系統擴充，供預約狀態徽章使用。</p>
+      <pre class="codeblock" id="code"></pre>
+    </div>
+  </section>
+</div>
+
+<script>
+const PAL = [
+  ['--background','背景 background','36 38% 96.5%','#f7f2ea'],
+  ['--foreground','前景 foreground','25 22% 16%','#2e2620'],
+  ['--card','卡片 card','40 50% 99.5%','#fffdfa'],
+  ['--secondary','次要 secondary','33 32% 91%','#ece2d6'],
+  ['--muted','靜音 muted','35 28% 92.5%','#efe7db'],
+  ['--accent','強調面 accent','30 44% 88%','#ecdcc9'],
+  ['--border','邊框 border','32 24% 85%','#e0d4c4'],
+  ['--primary','主色 primary','22 72% 52%','#d2733a'],
+  ['--primary-soft','主色淡面','26 70% 92%','#f8e6d6'],
+];
+const SEM = [
+  ['--success','成功 / 低度 / 已確認','142 32% 38%','#41804f'],
+  ['--warning','待處理 / 中度','36 78% 44%','#c8881a'],
+  ['--destructive','阻斷 / 高度','6 64% 48%','#c93f35'],
+  ['--info','資訊','215 30% 46%','#52688a'],
+];
+const pchip = ([v,nm,hsl,hex])=>`<div class="pchip"><div class="sw" style="background:hsl(${hsl})"></div>
+  <div class="meta"><div class="nm">${nm}</div><div class="hsl">${v}<br>${hsl} · ${hex}</div></div></div>`;
+document.getElementById('palGrid').innerHTML = PAL.map(pchip).join('');
+document.getElementById('semGrid').innerHTML = SEM.map(pchip).join('');
+
+const TYP = [
+  ['t-display / 28','專業 ✕ 溫馨'],['t-h1 / 22','建立預約'],['t-h2 / 18','選擇服務分級'],
+  ['t-h3 / 15.5','豪華房 · 每日放風'],['t-body / 14','資深美容師一對一，含 SPA、耳道清潔與造型剪。'],
+  ['t-sm / 12.5','2/14（六）14:00 · 約 120 分鐘'],['num / DM Mono','NT$3,600 · 900123456789012'],
+];
+document.getElementById('typ').innerHTML = TYP.map(([t,s])=>{
+  const cls=t.split(' ')[0];
+  return `<div><span class="tag">${t}</span><span class="${cls}">${s}</span></div>`;
+}).join('');
+
+const badge=(cls,zh,en)=>`<span class="badge ${cls}"><span class="dot"></span>${zh}<span class="num" style="opacity:.6;font-weight:500"> ${en}</span></span>`;
+document.getElementById('bk').innerHTML=[
+  ['warn','待付訂金','PendingDeposit'],['warn','待審核','PendingReview'],['success','已確認','Confirmed'],
+  ['success','已報到','CheckedIn'],['brand','服務中','InProgress'],['neutral','已完成','Completed'],
+  ['neutral','已取消','Cancelled'],['neutral','未到場','NoShow'],['danger','異常終止','Aborted'],
+].map(a=>badge(...a)).join('');
+document.getElementById('wo').innerHTML=[
+  ['neutral','待處理','Pending'],['brand','預檢','PreCheck'],['brand','洗澡','Bathing'],
+  ['brand','烘乾','Drying'],['brand','剪毛','Grooming'],['success','已完成','Completed'],
+].map(a=>badge(...a)).join('');
+document.getElementById('kn').innerHTML=[
+  ['success','空床','Available'],['warn','已預約','Reserved'],['brand','已入住','Occupied'],['neutral','清潔中','Cleaning'],
+  ['success','疫苗有效','Valid'],['danger','疫苗逾期','Expired'],
+].map(a=>badge(...a)).join('');
+document.getElementById('dg').innerHTML=[
+  ['neutral','無','None'],['success','低度','Low'],['warn','中度','Medium'],['danger','高度','High'],
+].map(a=>badge(...a)).join('');
+
+// switchers
+document.getElementById('palPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.documentElement.dataset.palette=b.dataset.palette;
+  document.querySelectorAll('#palPick button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  buildCode();});
+document.getElementById('roundPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.documentElement.dataset.round=b.dataset.round;
+  document.querySelectorAll('#roundPick button').forEach(x=>x.setAttribute('aria-selected',x===b));});
+
+function buildCode(){
+  const p=document.documentElement.dataset.palette;
+  const prim={latte:'22 72% 52%',forest:'150 36% 34%',coral:'8 74% 58%'}[p];
+  document.getElementById('code').innerHTML=
+`<span class="c">/* 專業 ✕ 溫馨 — paste into :root (light) */</span>
+<span class="p">--background</span>: 36 38% 96.5%;   <span class="p">--foreground</span>: 25 22% 16%;
+<span class="p">--card</span>: 40 50% 99.5%;       <span class="p">--card-foreground</span>: 25 22% 16%;
+<span class="p">--primary</span>: ${prim};      <span class="p">--primary-foreground</span>: 40 40% 98%;
+<span class="p">--secondary</span>: 33 32% 91%;     <span class="p">--muted</span>: 35 28% 92.5%;
+<span class="p">--muted-foreground</span>: 28 12% 46%;
+<span class="p">--accent</span>: 30 44% 88%;        <span class="p">--border</span>: 32 24% 85%;
+<span class="p">--input</span>: 32 24% 85%;          <span class="p">--ring</span>: ${prim};
+<span class="p">--destructive</span>: 6 64% 48%;     <span class="p">--destructive-foreground</span>: 40 40% 98%;
+<span class="p">--radius</span>: 0.85rem;
+<span class="c">/* 擴充語意色（預約狀態徽章） */</span>
+<span class="p">--success</span>: 142 32% 38%;       <span class="p">--warning</span>: 36 78% 44%;`;
+}
+buildCode();
+</script>
+</body>
+</html>

@@ -178,3 +178,12 @@ Enum：`DangerLevel { None, Low, Medium, High }`、`VaccinationStatus { Pending,
    現：`/api/v1/pets` 作飼主面資源對外；payment/notification/audit 維持內部。
 
 > 偏離/詮釋全清單見 `../contracts/api-overview.md` 末段。
+
+---
+
+## 9. S2b 評審決議（2026-06-09 · 後端完成）
+S2b 實作訂單生命週期時提出三處與凍結契約的張力，指揮側裁決如下（**契約/enum 維持凍結，S3 不受影響**）：
+
+1. **no-show 維持 CLI 腳本，不加 HTTP 端點**：FR-03.5 屬系統自動化（非使用者觸發），前端無需此端點；加端點會破壞凍結契約而無 demo 收益。實作＝`BookingService.mark_no_shows()` + `backend/scripts/no_show_sweep.py`（手動／cron 觸發）。
+2. **住宿狀態支線成立**：補 `CheckedIn→Completed`（住宿退房直結，無 InProgress 子態）與 `CheckedIn→Aborted`（住宿緊急）。§4.4 原措辭偏美容，此為住宿路徑必要補全；權威轉移表見 `backend/app/modules/booking/state.py`。
+3. **audit/notification enum 不擴充**：FR-05.2 要求的稽核事件（建立/取消、報到成功/阻斷、服務狀態變更、付款、緊急）已被現有 9 個 `AuditActionType` 涵蓋；額外的 confirmed/reviewed/no-show 非 FR-05.2 明列，以既有值替代、語意由通知標題/內容承載。擴 enum＝紅線改動＋migration，無需求支撐，故不改。

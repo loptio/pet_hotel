@@ -167,3 +167,66 @@ def auth_headers():
         return {"Authorization": f"Bearer {create_access_token(account.id)}"}
 
     return _headers
+
+
+# ----- S2b catalogue / inventory factories (no creation API; seeded directly) -----
+@pytest.fixture
+def make_service(db):
+    """Create a service catalogue item directly (Standard/Deluxe lodging or
+    Basic/Full grooming). Returns the ServiceItem; capture .id if committing later."""
+    from decimal import Decimal
+
+    from app.modules.booking.models import (
+        GroomingService,
+        GroomingType,
+        LodgingService,
+        RoomType,
+        ServiceCategory,
+    )
+
+    def _make(category="Lodging", name=None, price="1000.00", room_type="Standard",
+              grooming_type="Basic", duration=60, active=True):
+        if ServiceCategory(category) == ServiceCategory.LODGING:
+            si = LodgingService(name=name or "標準房", room_type=RoomType(room_type),
+                                base_price=Decimal(price), currency="TWD",
+                                duration_minutes=duration, is_active=active)
+        else:
+            si = GroomingService(name=name or "基礎美容", grooming_type=GroomingType(grooming_type),
+                                 base_price=Decimal(price), currency="TWD",
+                                 duration_minutes=duration, is_active=active)
+        db.add(si)
+        db.flush()
+        return si
+
+    return _make
+
+
+@pytest.fixture
+def make_kennel(db):
+    def _make(number=None, room_type="Standard", status="Available"):
+        from app.modules.booking.models import Kennel, KennelStatus, RoomType
+
+        k = Kennel(kennel_number=number or f"K-{uuid.uuid4().hex[:6]}",
+                   type=RoomType(room_type), status=KennelStatus(status))
+        db.add(k)
+        db.flush()
+        return k
+
+    return _make
+
+
+@pytest.fixture
+def make_pet(db, make_account):
+    """Create a pet (optionally for a given owner). Returns (owner, pet)."""
+    from app.modules.pet.models import DangerLevel, Pet
+
+    def _make(owner=None, name="旺財", chip_id="900000000000001", danger="None", blocked=False):
+        if owner is None:
+            owner = make_account(role="Owner")
+        pet = Pet(owner_id=owner.id, name=name, chip_id=chip_id,
+                  danger_level=DangerLevel(danger), is_blocked=blocked)
+        db.add(pet)
+        db.flush()
+        return owner, pet
+
+    return _make

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-palette="latte" data-round="soft">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飼主預約 App · 高保真原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hifi/theme.css">
+<link rel="stylesheet" href="hifi/components.css">
+<link rel="stylesheet" href="hifi/app.css">
+</head>
+<body>
+  <div class="stage">
+    <div class="device">
+      <div class="notch"></div>
+      <div class="viewport">
+        <div class="statusbar">
+          <span class="num">9:41</span>
+          <span class="r"><span class="num" style="font-size:11px">5G</span><span class="bat"></span></span>
+        </div>
+        <div class="screens" id="screens"></div>
+        <div id="overlays"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- preview controls -->
+  <button class="fab" id="fab" title="預覽設定"></button>
+  <div class="settings" id="settings">
+    <h4>預覽設定</h4>
+    <div class="sub">這是給你調樣式的面板，不是 App 的一部分</div>
+    <div class="grp">
+      <span class="lbl">主色配色</span>
+      <div class="swatches" data-pal>
+        <button data-set-pal="latte"  style="background:#d2733a" aria-pressed="true" title="奶茶暖橘"></button>
+        <button data-set-pal="forest" style="background:#38745a" title="森林綠"></button>
+        <button data-set-pal="coral"  style="background:#e35c47" title="珊瑚紅"></button>
+      </div>
+    </div>
+    <div class="grp">
+      <span class="lbl">圓角</span>
+      <div class="seg">
+        <button data-set-round="sharp" aria-selected="false">方</button>
+        <button data-set-round="soft" aria-selected="true">中</button>
+        <button data-set-round="round" aria-selected="false">圓</button>
+      </div>
+    </div>
+    <div class="grp">
+      <span class="lbl">寵物危險等級（示範分流）</span>
+      <div class="seg">
+        <button data-set-danger="None" aria-selected="true">無</button>
+        <button data-set-danger="Low" aria-selected="false">低</button>
+        <button data-set-danger="Medium" aria-selected="false">中</button>
+        <button data-set-danger="High" aria-selected="false">高</button>
+      </div>
+    </div>
+    <div class="sub" style="margin:0">於「確認預約」彈窗驗證：無/低→可付款 · 中→待審核 · 高→拒絕。</div>
+  </div>
+
+  <script src="hifi/image-slot.js"></script>
+  <script src="hifi/app.js"></script>
+  <!-- 設定 FAB 圖示 -->
+  <script>document.getElementById('fab').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>';</script>
+</body>
+</html>
