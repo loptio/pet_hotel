@@ -1,0 +1,49 @@
+# ============ OS / editor ============
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# ============ Python (backend) ============
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ============ Env / secrets ============
+.env
+.env.*
+!.env.example
+
+# ============ Node / frontend ============
+node_modules/
+dist/
+build/
+.vite/
+.vercel/
+*.local
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============ Runtime uploads (vaccine proof / work photos) ============
+uploads/
+backend/uploads/
+
+# ============ Logs / temp ============
+*.log
+
+# ============ docs: 只上傳 SDD 與 SRS，其餘（build-plan / learning-journey / notes / prompts）不上傳 ============
+docs/*
+!docs/SDD.md
+!docs/SRS.md

@@ -1,0 +1,81 @@
+@startuml
+title 場景三：美容服務執行（含緊急事件）
+
+autonumber
+skinparam titleFontSize 18
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+
+actor "美容師" as Groomer
+participant "Frontend" as FE
+participant "GroomingService" as GS
+participant "NotificationService" as NS
+participant "AuditService" as AS
+
+Groomer -> FE : 開啟工作單
+activate FE
+FE -> GS : startWorkOrder(workOrderId)
+activate GS
+GS -> GS : setStatus(Pending)
+GS --> FE : workOrderStarted
+FE --> Groomer : 顯示工作單
+deactivate FE
+
+== 美容階段循環 ==
+
+note over GS
+  依序執行四個階段：
+  PreCheck → Bathing → Drying → Grooming
+end note
+
+loop for each stage in [PreCheck, Bathing, Drying, Grooming]
+  Groomer -> FE : 更新階段狀態(stage)
+  activate FE
+  FE -> GS : updateStage(workOrderId, stage)
+  GS -> GS : setStatus(stage)
+  GS ->> AS : append(ServiceStatusChanged, stage)
+  GS ->> NS : notify(Owner, stage + " 完成")
+  GS --> FE : stageUpdated(stage)
+  FE --> Groomer : 顯示更新成功
+  deactivate FE
+
+  opt 上傳照片
+    Groomer -> FE : 上傳作業照片
+    activate FE
+    FE -> GS : uploadPhoto(workOrderId, photo)
+    GS -> GS : saveWorkPhoto(photo)
+    GS --> FE : photoSaved
+    deactivate FE
+  end
+end
+
+== 完成或緊急事件 ==
+
+alt 正常完成
+  Groomer -> FE : 標記完成
+  activate FE
+  FE -> GS : completeWorkOrder(workOrderId)
+  GS -> GS : setStatus(Completed)
+  GS ->> AS : append(ServiceStatusChanged, Completed)
+  GS ->> NS : notify(Owner, "服務已完成")
+  GS --> FE : workOrderCompleted
+  deactivate GS
+  FE --> Groomer : 顯示完成
+  deactivate FE
+
+else 發生緊急事件
+  Groomer -> FE : 觸發緊急事件(description)
+  activate FE
+  FE -> GS : triggerEmergency(workOrderId, description)
+  GS -> GS : createEmergencyEvent(description, reportedBy)
+  GS -> GS : setStatus(Aborted)
+  GS ->> AS : append(EmergencyTriggered, workOrderId)
+  GS ->> NS : notify(Owner, "緊急事件：" + description)
+  GS --> FE : emergencyRecorded
+  deactivate GS
+  FE --> Groomer : 顯示緊急事件已記錄
+  deactivate FE
+end
+
+@enduml

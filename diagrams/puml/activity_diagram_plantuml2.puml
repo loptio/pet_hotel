@@ -1,0 +1,54 @@
+@startuml
+title 報到流程
+
+skinparam conditionStyle diamond
+skinparam shadowing false
+skinparam linetype ortho
+
+|櫃檯人員|
+start
+:掃描晶片或輸入預約單號;
+
+|系統|
+:核驗預約狀態;
+if (預約是否有效?) then (無效)
+  :顯示錯誤提示;
+  stop
+else (有效)
+  |櫃檯人員|
+  :核對晶片號碼與文件內容;
+  :錄入疫苗紀錄;
+
+  |系統|
+  :校驗疫苗有效期;
+  if (疫苗是否有效?) then (逾期)
+    :顯示疫苗逾期異常提示;
+    :寫入 Audit Log（報到阻斷）;
+
+    |通知服務|
+    :發送疫苗逾期通知;
+
+    |飼主|
+    :收到疫苗逾期通知;
+    stop
+  else (有效)
+    |系統|
+    :檢查寵物危險等級;
+    if (危險等級為低度?) then (是)
+      :顯示低度危險警告;
+    endif
+
+    :自動分配床位;
+    :更新床位狀態為已入住;
+    :更新預約狀態為已報到;
+    :寫入 Audit Log（報到成功）;
+
+    |通知服務|
+    :發送報到成功通知;
+
+    |飼主|
+    :收到報到成功通知;
+    stop
+  endif
+endif
+@enduml

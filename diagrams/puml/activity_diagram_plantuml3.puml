@@ -1,0 +1,80 @@
+@startuml
+title 服務執行與狀態通知
+
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F8F8F8
+  BorderColor #333333
+  DiamondBackgroundColor #FFFFFF
+}
+
+|美容師|
+start
+:開啟工作單;
+
+|系統|
+:更新服務狀態為待處理;
+
+|美容師|
+:執行預檢;
+note right: 每個階段均可上傳作業照片
+|系統|
+:更新狀態為預檢中;
+:寫入 Audit Log;
+|通知服務 (FCM/APNs)|
+:發送預檢通知給飼主;
+
+|美容師|
+:執行洗澡;
+|系統|
+:更新狀態為洗澡中;
+:寫入 Audit Log;
+|通知服務 (FCM/APNs)|
+:發送洗澡通知給飼主;
+
+|美容師|
+:執行烘乾;
+|系統|
+:更新狀態為烘乾中;
+:寫入 Audit Log;
+|通知服務 (FCM/APNs)|
+:發送烘乾通知給飼主;
+
+|美容師|
+:執行剪毛;
+|系統|
+:更新狀態為剪毛中;
+:寫入 Audit Log;
+|通知服務 (FCM/APNs)|
+:發送剪毛通知給飼主;
+
+|美容師|
+if (是否發生緊急事件?) then (是)
+  :手動觸發緊急事件;
+  :錄入事件描述;
+
+  |系統|
+  :建立緊急事件紀錄;
+  :寫入 Audit Log（緊急事件）;
+  :更新服務狀態為異常終止;
+  :觸發緊急通知;
+
+  |通知服務 (FCM/APNs)|
+  :發送緊急通知給飼主;
+  stop
+
+else (否)
+  |美容師|
+  :切換狀態為「已完成」;
+
+  |系統|
+  :更新服務狀態為已完成;
+  :寫入 Audit Log;
+  :觸發完成通知;
+
+  |通知服務 (FCM/APNs)|
+  :發送服務完成通知給飼主;
+  stop
+endif
+
+@enduml

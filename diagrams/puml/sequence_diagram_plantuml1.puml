@@ -1,0 +1,103 @@
+@startuml
+title 場景一：建立預約與支付訂金
+
+autonumber
+skinparam titleFontSize 18
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+actor "飼主" as Owner
+participant "Frontend" as FE
+participant "BookingService" as BS
+participant "PetService" as PS
+participant "PaymentService" as PAY
+participant "NotificationService" as NS
+participant "AuditService" as AS
+participant "ECPay" as ECPay <<external>>
+
+Owner -> FE : 選擇寵物與服務類型
+activate FE
+FE -> BS : createBooking(petId, serviceItemId, timeSlot)
+activate BS
+
+BS -> PS : checkDangerLevel(petId)
+activate PS
+PS --> BS : dangerLevel: DangerLevel
+deactivate PS
+
+alt dangerLevel == High
+  BS ->> AS : append(BookingRejected, petId)
+  BS --> FE : rejected(reason=DangerLevel.High)
+  deactivate BS
+  FE --> Owner : 顯示拒絕提示
+  deactivate FE
+
+else dangerLevel == Medium
+  BS -> BS : setStatus(PendingReview)
+  BS ->> AS : append(BookingPendingReview, bookingId)
+  BS ->> NS : notifyStaffReview(bookingId)
+  BS --> FE : pendingReview(bookingId)
+  deactivate BS
+  FE --> Owner : 顯示待審核提示
+  deactivate FE
+
+else dangerLevel == None or Low
+  BS -> BS : checkAvailability(serviceItemId, timeSlot)
+
+  alt 時段不可用
+    BS --> FE : unavailable(availableSlots[])
+    deactivate BS
+    FE --> Owner : 顯示可用時段，請重新選擇
+    deactivate FE
+
+  else 時段可用
+    BS -> BS : calculateAmount(serviceItemId, quantity)
+    BS -> BS : lockResources(timeSlot)
+
+    opt dangerLevel == Low
+      BS --> FE : warning(dangerLevel=Low)
+      FE --> Owner : 顯示低度危險警告
+    end
+
+    BS --> FE : orderSummary(totalAmount, depositAmount, slotId)
+    deactivate BS
+    FE --> Owner : 顯示訂單確認頁
+    deactivate FE
+
+    Owner -> FE : 確認訂單並選擇支付方式(paymentMethod)
+    activate FE
+    FE -> BS : confirmBooking(slotId, paymentMethod)
+    activate BS
+    BS -> PAY : charge(bookingId, depositAmount, paymentMethod)
+    activate PAY
+
+    PAY -> ECPay : authorize(amount, method)
+    activate ECPay
+    ECPay --> PAY : authResult
+    deactivate ECPay
+
+    alt 付款成功
+      PAY --> BS : paymentSuccess(transactionId)
+      deactivate PAY
+      BS -> BS : setStatus(Confirmed)
+      BS ->> AS : append(BookingCreated, bookingId)
+      BS ->> NS : sendBookingConfirmed(ownerId, bookingId)
+      BS --> FE : bookingCreated(bookingId)
+      deactivate BS
+      FE --> Owner : 顯示預約成功
+      deactivate FE
+
+    else 付款失敗
+      PAY --> BS : paymentFailed(reason)
+      deactivate PAY
+      BS -> BS : releaseResources(slotId)
+      BS ->> AS : append(PaymentFailed, bookingId)
+      BS --> FE : paymentFailed(reason)
+      deactivate BS
+      FE --> Owner : 顯示付款失敗，可重試
+      deactivate FE
+    end
+  end
+end
+
+@enduml

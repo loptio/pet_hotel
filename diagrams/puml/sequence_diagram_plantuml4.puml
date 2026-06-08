@@ -1,0 +1,75 @@
+@startuml
+title 場景四：取消預約與退款
+
+autonumber
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+actor "飼主" as Owner
+participant "Frontend" as FE
+participant "CancellationService" as CS
+participant "PaymentService" as PAY
+participant "NotificationService" as NS
+participant "AuditService" as AS
+participant "ECPay" as ECPay <<external>>
+
+Owner -> FE : 取消預約(reason)
+activate FE
+FE -> CS : cancelBooking(bookingId, reason)
+activate CS
+
+CS -> CS : validateCancellable(bookingId)
+
+alt 預約不可取消（已報到/已完成/已取消）
+    CS --> FE : error(cannotCancel)
+    deactivate CS
+    FE --> Owner : 顯示錯誤訊息
+    deactivate FE
+
+else 預約可取消
+    CS -> CS : setCancelledAt(now)
+    CS -> CS : setCancelReason(reason)
+    CS -> CS : setStatus(Cancelled)
+    CS -> CS : releaseResources()
+
+    CS -> CS : checkRefundEligibility(bookingId)
+    note right of CS
+        FR-05.4 退款規則：
+        startAt - now > 24h → 全額退訂金
+        startAt - now ≤ 24h → 不退
+    end note
+
+    alt 符合退款條件（> 24h）
+        CS -> PAY : processRefund(bookingId, depositAmount)
+        activate PAY
+        PAY -> ECPay : refund(txnId, amount)
+        activate ECPay
+        ECPay --> PAY : refundResult
+        deactivate ECPay
+
+        alt 退款成功
+            PAY --> CS : refundSuccess(refundTxnId)
+            deactivate PAY
+            CS ->> AS : append(BookingCancelled, refunded, bookingId)
+            CS ->> NS : notify(ownerId, "預約已取消，訂金將退還")
+
+        else 退款失敗
+            PAY --> CS : refundFailed(reason)
+            deactivate PAY
+            CS -> CS : setRefundStatus(Pending)
+            CS ->> AS : append(BookingCancelled, refundFailed, bookingId)
+            CS ->> NS : notify(ownerId, "預約已取消，退款處理中，請稍候")
+        end
+
+    else 不符合退款條件（≤ 24h）
+        CS ->> AS : append(BookingCancelled, noRefund, bookingId)
+        CS ->> NS : notify(ownerId, "預約已取消，訂金不予退還")
+    end
+
+    CS --> FE : cancellationResult
+    deactivate CS
+    FE --> Owner : 顯示取消結果
+    deactivate FE
+end
+
+@enduml

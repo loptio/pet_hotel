@@ -1,0 +1,133 @@
+@startuml
+title 寵物旅館與美容預約系統 — Deployment Diagram（Docker + Kubernetes 容器化微服務）
+
+skinparam shadowing false
+skinparam ranksep 55
+skinparam nodesep 28
+skinparam defaultFontName San Francisco
+skinparam node {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+}
+skinparam database {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+}
+skinparam queue {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+}
+skinparam artifact {
+  BackgroundColor #EEF4FF
+  BorderColor #4A6FA5
+}
+skinparam rectangle {
+  BackgroundColor #F7F7F7
+  BorderColor #999999
+}
+skinparam cloud {
+  BackgroundColor #FAFAFA
+  BorderColor #888888
+}
+
+' ===================== Client Tier =====================
+node "飼主手機  «device»\niOS / Android" as Phone {
+  artifact "Mobile App" as MobileApp
+}
+node "瀏覽器  «device»\n櫃台 / 飼主 Web" as Browser {
+  artifact "Web App (SPA)" as WebApp
+}
+
+' ===================== Edge Tier =====================
+node "CDN  «device»\n靜態資源快取" as CDN
+node "Load Balancer / Ingress  «device»\nTLS 終結 + 反向代理" as LB
+
+' ===================== Kubernetes Cluster =====================
+node "Kubernetes Cluster  «executionEnvironment»  (Docker 容器編排)" as K8s {
+  artifact "API Gateway" as GW
+  rectangle "Application Layer — 每個 Service = 1 Pod / 1 Docker 容器" as App {
+    artifact "BookingService" as BS
+    artifact "CheckInService" as CIS
+    artifact "GroomingService" as GS
+    artifact "CancellationService" as CS
+    artifact "AuthService" as AUTH
+    artifact "PetService" as PS
+    artifact "KennelService" as KS
+    artifact "PaymentService" as PAY
+    artifact "NotificationService" as NS
+    artifact "AuditService" as AS
+  }
+}
+
+' ===================== Data / Stateful Tier =====================
+database "PostgreSQL Primary\n«StatefulSet»" as PGM
+database "PostgreSQL Replica\n(standby)" as PGR
+database "Redis\n快取 + 分散式鎖" as REDIS
+queue "RabbitMQ\n訊息佇列" as MQ
+node "Object Storage  «device»\nMinIO / S3 相容" as OBJ
+
+' ===================== External Systems =====================
+cloud "ECPay 金流\n«external»" as ECPay
+cloud "FCM / APNs 推播\n«external»" as PUSH
+
+' ===================== Communication Paths =====================
+MobileApp --> LB : HTTPS/TLS
+WebApp --> CDN : 靜態資源
+WebApp --> LB : HTTPS/TLS
+LB --> GW : HTTPS
+
+GW --> BS
+GW --> CIS
+GW --> GS
+GW --> CS
+GW --> AUTH
+
+BS --> PGM : SQL/TLS :5432
+AUTH --> PGM
+PGM --> PGR : 串流複寫
+
+BS --> REDIS : 時段/床位鎖
+GW --> REDIS : session
+
+BS --> MQ : 發布事件
+GS --> MQ : 發布事件
+MQ --> NS : 消費 (async)
+MQ --> AS : 消費 (async)
+
+GS --> OBJ : 作業照片 (S3 API)
+PS --> OBJ : 疫苗證明文件
+
+PAY --> ECPay : HTTPS
+NS --> PUSH : HTTPS
+
+' ===================== Notes =====================
+note right of GW
+  FR-01.2：所有請求經 API Gateway
+  做 RBAC 驗證後才進入 Service；
+  僅對外暴露 Booking / CheckIn /
+  Grooming / Cancellation / Auth 五個
+end note
+note bottom of App
+  為保持清晰僅畫代表性資料流：
+  所有 Service 皆連 PostgreSQL，
+  狀態變更皆發布事件至 RabbitMQ
+end note
+note right of REDIS
+  FR-03.2 嚴禁超額預約（分散式鎖）
+  NFR-02 查詢回應 < 3 秒
+end note
+note bottom of MQ
+  Notification / Audit 全程非同步
+  FR-05.2 Audit Log 僅追加不可竄改
+end note
+note bottom of OBJ
+  FR-02.4 疫苗證明、FR-04.2 作業照片
+end note
+note right of ECPay
+  NFR-03：付款資訊不得儲存於系統內部
+end note
+note bottom of PGR
+  NFR-04：主從備援 → 一致性 / 可靠性
+end note
+
+@enduml

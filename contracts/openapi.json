@@ -1,0 +1,4917 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pet Hotel & Grooming System API",
+    "description": "Contract-first OpenAPI for the Pet Hotel & Grooming System.\n\n**S1 status:** endpoints are stubs (HTTP 501) with complete request/response schemas — this document is the single source of truth for backend + frontend. Business logic, state machines and real payment/notification land in S2+.\n\nAuthoritative data model: `diagrams/puml/class_diagram_plantuml.puml`. Internal modules (payment, notification, audit) are not exposed as endpoints.",
+    "version": "0.1.0-S1"
+  },
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register an owner account (FR-01.1)",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Log in, obtain JWT (FR-01.1)",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password-reset/request": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Request a password-reset email (FR-01.1)",
+        "operationId": "request_password_reset_api_v1_auth_password_reset_request_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password-reset/confirm": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Confirm password reset with token (FR-01.1)",
+        "operationId": "confirm_password_reset_api_v1_auth_password_reset_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get my profile (FR-01.4)",
+        "operationId": "get_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Edit my name / phone (FR-01.4)",
+        "operationId": "update_me_api_v1_auth_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/accounts": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "List accounts — admin (FR-01.3)",
+        "operationId": "list_accounts_api_v1_auth_accounts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AccountOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Accounts Api V1 Auth Accounts Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/accounts/{account_id}/ban": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Ban an account — admin (FR-01.3)",
+        "operationId": "ban_account_api_v1_auth_accounts__account_id__ban_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BanAccountIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/accounts/{account_id}/unban": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Unban an account — admin (FR-01.3)",
+        "operationId": "unban_account_api_v1_auth_accounts__account_id__unban_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/staff": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Create a staff account — admin (FR-01.2)",
+        "operationId": "create_staff_api_v1_auth_staff_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaffCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/roles": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "List roles (FR-01.2)",
+        "operationId": "list_roles_api_v1_auth_roles_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RoleOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Roles Api V1 Auth Roles Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/permissions": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "List permissions (FR-01.2)",
+        "operationId": "list_permissions_api_v1_auth_permissions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PermissionOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Permissions Api V1 Auth Permissions Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/accounts/{account_id}/roles": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Assign a role to an account (FR-01.2)",
+        "operationId": "assign_role_api_v1_auth_accounts__account_id__roles_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignRoleIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleAssignmentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/accounts/{account_id}/roles/{role_id}": {
+      "delete": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Revoke a role from an account (FR-01.2)",
+        "operationId": "revoke_role_api_v1_auth_accounts__account_id__roles__role_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          },
+          {
+            "name": "role_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Role Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reports/abnormal-cancellations": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Abnormal cancellation report — admin (FR-01.3)",
+        "operationId": "abnormal_cancellation_report_api_v1_auth_reports_abnormal_cancellations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancellationReportOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pets": {
+      "get": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "List my pets (FR-02.1)",
+        "operationId": "list_pets_api_v1_pets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PetOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Pets Api V1 Pets Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Create a pet profile (FR-02.1)",
+        "operationId": "create_pet_api_v1_pets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetCreateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pets/{pet_id}": {
+      "get": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Get a pet profile",
+        "operationId": "get_pet_api_v1_pets__pet_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Edit pet profile (FR-02.1/02.6)",
+        "operationId": "update_pet_api_v1_pets__pet_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetUpdateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pets/{pet_id}/medical-records": {
+      "post": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Add a medical record (FR-02.2)",
+        "operationId": "add_medical_record_api_v1_pets__pet_id__medical_records_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicalRecordCreateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicalRecordOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "List medical records (FR-02.2)",
+        "operationId": "list_medical_records_api_v1_pets__pet_id__medical_records_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicalRecordOut"
+                  },
+                  "title": "Response List Medical Records Api V1 Pets  Pet Id  Medical Records Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pets/{pet_id}/vaccinations": {
+      "post": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Pre-enter a vaccination (FR-02.3)",
+        "operationId": "add_vaccination_api_v1_pets__pet_id__vaccinations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VaccinationCreateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationRecordOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "List vaccinations",
+        "operationId": "list_vaccinations_api_v1_pets__pet_id__vaccinations_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VaccinationRecordOut"
+                  },
+                  "title": "Response List Vaccinations Api V1 Pets  Pet Id  Vaccinations Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pets/{pet_id}/vaccinations/{vaccination_id}/proof": {
+      "post": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Upload vaccine proof document (FR-02.4)",
+        "operationId": "upload_vaccine_proof_api_v1_pets__pet_id__vaccinations__vaccination_id__proof_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          },
+          {
+            "name": "vaccination_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Vaccination Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_vaccine_proof_api_v1_pets__pet_id__vaccinations__vaccination_id__proof_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccineProofDocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pets/{pet_id}/danger-level": {
+      "post": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Mark danger level — Staff/Groomer: Low/Medium, Admin: High (FR-02.7)",
+        "operationId": "mark_danger_level_api_v1_pets__pet_id__danger_level_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DangerLevelMarkIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pets/{pet_id}/unblock": {
+      "post": {
+        "tags": [
+          "Pets & Health"
+        ],
+        "summary": "Unblock a pet — admin (FR-02.7)",
+        "operationId": "unblock_pet_api_v1_pets__pet_id__unblock_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/services": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "List bookable service items — Standard/Deluxe room, Basic/Full grooming (FR-03.1/03.7)",
+        "operationId": "list_services_api_v1_bookings_services_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ServiceCategory"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceItemOut"
+                  },
+                  "title": "Response List Services Api V1 Bookings Services Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/availability": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Check availability for a service + window (FR-03.2/06.2)",
+        "operationId": "check_availability_api_v1_bookings_availability_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "service_item_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Service Item Id"
+            }
+          },
+          {
+            "name": "start_at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Start At"
+            }
+          },
+          {
+            "name": "end_at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "End At"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/pending-review": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "List PendingReview bookings — staff (FR-02.8, seq5)",
+        "operationId": "list_pending_review_api_v1_bookings_pending_review_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BookingOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Pending Review Api V1 Bookings Pending Review Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookings": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Create a lodging/grooming booking (FR-03.1, seq1)",
+        "operationId": "create_booking_api_v1_bookings_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingCreateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Rejected — pet danger level is High (FR-02.8)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "List my bookings — current + history (FR-03.4)",
+        "operationId": "list_bookings_api_v1_bookings_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BookingStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingOut"
+                  },
+                  "title": "Response List Bookings Api V1 Bookings Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{booking_id}": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Get booking detail incl. items + pets (FR-03.4/04.4)",
+        "operationId": "get_booking_api_v1_bookings__booking_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{booking_id}/deposit": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Pay deposit (30%) and confirm (FR-05.3, seq1)",
+        "operationId": "pay_deposit_api_v1_bookings__booking_id__deposit_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositPaymentIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingPaymentResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{booking_id}/final-payment": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Settle the final balance (FR-05.3)",
+        "operationId": "pay_final_api_v1_bookings__booking_id__final_payment_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinalPaymentIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingPaymentResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{booking_id}/review": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Approve/Reject a PendingReview booking — staff (FR-02.8, seq5)",
+        "operationId": "review_booking_api_v1_bookings__booking_id__review_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkin/kennels": {
+      "get": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "List kennels + occupancy (FR-03.6)",
+        "operationId": "list_kennels_api_v1_checkin_kennels_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/KennelOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Kennels Api V1 Checkin Kennels Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/checkin/kennels/{kennel_id}": {
+      "patch": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Update kennel status — staff (FR-06.4)",
+        "operationId": "update_kennel_api_v1_checkin_kennels__kennel_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "kennel_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Kennel Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KennelUpdateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KennelOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkin/kennels/{kennel_id}/available": {
+      "post": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Mark a cleaned kennel Available — manual (FR-06.4)",
+        "operationId": "mark_kennel_available_api_v1_checkin_kennels__kennel_id__available_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "kennel_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Kennel Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KennelOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkin": {
+      "post": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Perform check-in: verify booking + chip + vaccine, assign kennel (FR-04.1, seq2)",
+        "operationId": "check_in_api_v1_checkin_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckInResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/checkin/{booking_id}/verify": {
+      "get": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Verify booking status before check-in (FR-04.1)",
+        "operationId": "verify_booking_api_v1_checkin__booking_id__verify_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingVerifyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkin/{booking_id}/vaccine": {
+      "post": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Record vaccine at counter + auto-verify expiry (FR-02.5/06.1, seq2)",
+        "operationId": "record_vaccine_api_v1_checkin__booking_id__vaccine_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VaccineRecordAtCounterIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationRecordOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkin/{booking_id}/checkout": {
+      "post": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Check out: pet leaves → kennel Cleaning (FR-06.4)",
+        "operationId": "check_out_api_v1_checkin__booking_id__checkout_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckInResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkin/{booking_id}/emergency": {
+      "post": {
+        "tags": [
+          "CheckIn"
+        ],
+        "summary": "Front-desk trigger emergency for a booked pet — Booking-layer (FR-06.3, SDD §8)",
+        "operationId": "trigger_emergency_api_v1_checkin__booking_id__emergency_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmergencyAtCounterIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmergencyEventOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grooming/work-orders": {
+      "get": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "List work orders (groomer queue / by booking)",
+        "operationId": "list_work_orders_api_v1_grooming_work_orders_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/WorkOrderOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Work Orders Api V1 Grooming Work Orders Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/grooming/work-orders/{work_order_id}": {
+      "get": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "Get work-order detail incl. photos (FR-04.4)",
+        "operationId": "get_work_order_api_v1_grooming_work_orders__work_order_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grooming/work-orders/{work_order_id}/start": {
+      "post": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "Start a work order: Pending → PreCheck (seq3)",
+        "operationId": "start_work_order_api_v1_grooming_work_orders__work_order_id__start_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grooming/work-orders/{work_order_id}/stage": {
+      "post": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "Advance stage: PreCheck/Bathing/Drying/Grooming (FR-04.5, seq3)",
+        "operationId": "update_stage_api_v1_grooming_work_orders__work_order_id__stage_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StageUpdateIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grooming/work-orders/{work_order_id}/photos": {
+      "post": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "Upload a work photo (FR-04.2)",
+        "operationId": "upload_photo_api_v1_grooming_work_orders__work_order_id__photos_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_photo_api_v1_grooming_work_orders__work_order_id__photos_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkPhotoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "List work photos (FR-04.4)",
+        "operationId": "list_photos_api_v1_grooming_work_orders__work_order_id__photos_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkPhotoOut"
+                  },
+                  "title": "Response List Photos Api V1 Grooming Work Orders  Work Order Id  Photos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grooming/work-orders/{work_order_id}/complete": {
+      "post": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "Complete a work order: Grooming → Completed (seq3)",
+        "operationId": "complete_api_v1_grooming_work_orders__work_order_id__complete_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grooming/work-orders/{work_order_id}/emergency": {
+      "post": {
+        "tags": [
+          "Grooming"
+        ],
+        "summary": "Trigger emergency: any stage → Aborted (FR-06.3, seq3)",
+        "operationId": "trigger_emergency_api_v1_grooming_work_orders__work_order_id__emergency_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Work Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmergencyTriggerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmergencyEventOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cancellation/bookings/{booking_id}": {
+      "post": {
+        "tags": [
+          "Cancellation"
+        ],
+        "summary": "Cancel a booking + apply 24h refund rule (FR-03.3/05.4, seq4)",
+        "operationId": "cancel_booking_api_v1_cancellation_bookings__booking_id__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Booking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelBookingIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancellationResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Liveness probe",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Displayname"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AccountStatus"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "displayName",
+          "status",
+          "createdAt"
+        ],
+        "title": "AccountOut"
+      },
+      "AccountStatus": {
+        "type": "string",
+        "enum": [
+          "Active",
+          "Banned",
+          "Disabled"
+        ],
+        "title": "AccountStatus"
+      },
+      "AssignRoleIn": {
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Roleid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "roleId"
+        ],
+        "title": "AssignRoleIn"
+      },
+      "AvailabilityOut": {
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/AvailabilitySlotOut"
+            },
+            "type": "array",
+            "title": "Slots"
+          }
+        },
+        "type": "object",
+        "required": [
+          "available"
+        ],
+        "title": "AvailabilityOut",
+        "description": "FR-03.2 / FR-06.2 — only currently-available slots are returned."
+      },
+      "AvailabilitySlotOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "serviceItemId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Serviceitemid"
+          },
+          "startAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Startat"
+          },
+          "endAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Endat"
+          },
+          "capacity": {
+            "type": "integer",
+            "title": "Capacity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "serviceItemId",
+          "startAt",
+          "endAt",
+          "capacity"
+        ],
+        "title": "AvailabilitySlotOut"
+      },
+      "BanAccountIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "examples": [
+              "異常取消過多"
+            ]
+          }
+        },
+        "type": "object",
+        "title": "BanAccountIn"
+      },
+      "Body_upload_photo_api_v1_grooming_work_orders__work_order_id__photos_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_photo_api_v1_grooming_work_orders__work_order_id__photos_post"
+      },
+      "Body_upload_vaccine_proof_api_v1_pets__pet_id__vaccinations__vaccination_id__proof_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_vaccine_proof_api_v1_pets__pet_id__vaccinations__vaccination_id__proof_post"
+      },
+      "BookedPetOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "kennelId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kennelid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "petId"
+        ],
+        "title": "BookedPetOut"
+      },
+      "BookingCreateIn": {
+        "properties": {
+          "startAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Startat"
+          },
+          "endAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Endat"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BookingItemIn"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "startAt",
+          "endAt",
+          "items"
+        ],
+        "title": "BookingCreateIn",
+        "description": "FR-03.1 — choose pet(s), service(s) and a time window. Danger gating\n(FR-02.8) decides the resulting status (PendingDeposit / PendingReview) or a\n409 rejection when the pet's danger level is High."
+      },
+      "BookingDetailOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Ownerid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookingStatus"
+          },
+          "startAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Startat"
+          },
+          "endAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Endat"
+          },
+          "totalAmount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "depositAmount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "cancelledAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelledat"
+          },
+          "cancelReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelreason"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BookingItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "bookedPets": {
+            "items": {
+              "$ref": "#/components/schemas/BookedPetOut"
+            },
+            "type": "array",
+            "title": "Bookedpets"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "ownerId",
+          "status",
+          "startAt",
+          "endAt",
+          "totalAmount",
+          "depositAmount",
+          "createdAt"
+        ],
+        "title": "BookingDetailOut"
+      },
+      "BookingItemIn": {
+        "properties": {
+          "serviceItemId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Serviceitemid"
+          },
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "serviceItemId",
+          "petId"
+        ],
+        "title": "BookingItemIn"
+      },
+      "BookingItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "serviceItemId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Serviceitemid"
+          },
+          "bookedPetId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookedpetid"
+          },
+          "unitPrice": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "serviceItemId",
+          "bookedPetId",
+          "unitPrice",
+          "quantity"
+        ],
+        "title": "BookingItemOut"
+      },
+      "BookingOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Ownerid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookingStatus"
+          },
+          "startAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Startat"
+          },
+          "endAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Endat"
+          },
+          "totalAmount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "depositAmount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "cancelledAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelledat"
+          },
+          "cancelReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelreason"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "ownerId",
+          "status",
+          "startAt",
+          "endAt",
+          "totalAmount",
+          "depositAmount",
+          "createdAt"
+        ],
+        "title": "BookingOut"
+      },
+      "BookingPaymentResultOut": {
+        "properties": {
+          "booking": {
+            "$ref": "#/components/schemas/BookingOut"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/PaymentResultOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "booking",
+          "payment"
+        ],
+        "title": "BookingPaymentResultOut"
+      },
+      "BookingStatus": {
+        "type": "string",
+        "enum": [
+          "PendingDeposit",
+          "PendingReview",
+          "Confirmed",
+          "Cancelled",
+          "CheckedIn",
+          "InProgress",
+          "Completed",
+          "Aborted",
+          "NoShow"
+        ],
+        "title": "BookingStatus"
+      },
+      "BookingVerifyOut": {
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookingStatus"
+          },
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bookingId",
+          "status",
+          "valid"
+        ],
+        "title": "BookingVerifyOut",
+        "description": "FR-04.1 — front-desk verifies booking status before check-in."
+      },
+      "CancelBookingIn": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "examples": [
+              "臨時有事無法前往"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "CancelBookingIn",
+        "description": "NFR-05 — every cancellation records a reason (retained ≥180 days)."
+      },
+      "CancellationReportOut": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/CancellationReportRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "rows"
+        ],
+        "title": "CancellationReportOut"
+      },
+      "CancellationReportRow": {
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingid"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Ownerid"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Cancelledat"
+          },
+          "cancelReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelreason"
+          },
+          "refunded": {
+            "type": "boolean",
+            "title": "Refunded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bookingId",
+          "ownerId",
+          "cancelledAt",
+          "refunded"
+        ],
+        "title": "CancellationReportRow"
+      },
+      "CancellationResultOut": {
+        "properties": {
+          "booking": {
+            "$ref": "#/components/schemas/BookingOut"
+          },
+          "refund": {
+            "$ref": "#/components/schemas/RefundOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "booking",
+          "refund"
+        ],
+        "title": "CancellationResultOut"
+      },
+      "CheckInRequestIn": {
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingid"
+          },
+          "chipId": {
+            "type": "string",
+            "title": "Chipid",
+            "examples": [
+              "900123456789012"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "bookingId",
+          "chipId"
+        ],
+        "title": "CheckInRequestIn",
+        "description": "seq2 — scan chip / enter booking id."
+      },
+      "CheckInResult": {
+        "type": "string",
+        "enum": [
+          "Success",
+          "Blocked"
+        ],
+        "title": "CheckInResult"
+      },
+      "CheckInResultOut": {
+        "properties": {
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingid"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CheckInResult"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "examples": [
+              "VaccineExpired"
+            ]
+          },
+          "kennelNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kennelnumber",
+            "examples": [
+              "A-12"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "bookingId",
+          "result"
+        ],
+        "title": "CheckInResultOut",
+        "description": "result=Success → kennelNumber for lodging; result=Blocked → reason\n(e.g. VaccineExpired, FR-06.1)."
+      },
+      "DangerLevel": {
+        "type": "string",
+        "enum": [
+          "None",
+          "Low",
+          "Medium",
+          "High"
+        ],
+        "title": "DangerLevel"
+      },
+      "DangerLevelMarkIn": {
+        "properties": {
+          "dangerLevel": {
+            "$ref": "#/components/schemas/DangerLevel",
+            "examples": [
+              "Medium"
+            ]
+          },
+          "dangerNote": {
+            "type": "string",
+            "title": "Dangernote",
+            "examples": [
+              "曾對工作人員低吼"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "dangerLevel",
+          "dangerNote"
+        ],
+        "title": "DangerLevelMarkIn",
+        "description": "FR-02.7 — Staff/Groomer: Low/Medium; Admin: High. Note required."
+      },
+      "DepositPaymentIn": {
+        "properties": {
+          "paymentMethod": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "examples": [
+              "Online"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "paymentMethod"
+        ],
+        "title": "DepositPaymentIn",
+        "description": "FR-05.3 — deposit = 30% of estimated total."
+      },
+      "EmergencyAtCounterIn": {
+        "properties": {
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Description",
+            "examples": [
+              "住宿寵物突發嘔吐，已聯絡飼主"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "petId",
+          "description"
+        ],
+        "title": "EmergencyAtCounterIn",
+        "description": "FR-06.3 / SDD §8 — front-desk triggers an emergency for a booked pet.\nA booking may include several pets, so pet_id identifies which one;\ndescription is mandatory. (Lodging emergencies have no work order.)"
+      },
+      "EmergencyEventOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingid"
+          },
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "workOrderId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workorderid"
+          },
+          "reportedById": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Reportedbyid"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "occurredAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurredat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "bookingId",
+          "petId",
+          "reportedById",
+          "description"
+        ],
+        "title": "EmergencyEventOut",
+        "description": "Booking-layer event (SDD §8). workOrderId is set only for grooming-stage\nemergencies; NULL for front-desk/lodging ones."
+      },
+      "EmergencyTriggerIn": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Description",
+            "examples": [
+              "寵物突發抽搐，已送醫"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "title": "EmergencyTriggerIn",
+        "description": "FR-06.3 — description is mandatory."
+      },
+      "ErrorOut": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "examples": [
+              "Booking rejected: pet danger level is High"
+            ]
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code",
+            "examples": [
+              "DANGER_LEVEL_HIGH"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorOut",
+        "description": "Shape of error responses (e.g. danger-High rejection, unavailable slot)."
+      },
+      "FinalPaymentIn": {
+        "properties": {
+          "paymentMethod": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "examples": [
+              "CardOnSite"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "paymentMethod"
+        ],
+        "title": "FinalPaymentIn"
+      },
+      "GroomingStage": {
+        "type": "string",
+        "enum": [
+          "PreCheck",
+          "Bathing",
+          "Drying",
+          "Grooming"
+        ],
+        "title": "GroomingStage",
+        "description": "The 4 advanceable stages (FR-04.5) — a subset of WorkStatus used as the\nrequest body for stage updates."
+      },
+      "GroomingType": {
+        "type": "string",
+        "enum": [
+          "Basic",
+          "Full"
+        ],
+        "title": "GroomingType"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "KennelOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kennelNumber": {
+            "type": "string",
+            "title": "Kennelnumber"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/KennelStatus"
+          },
+          "occupiedByPetId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupiedbypetid"
+          },
+          "occupiedByPetName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupiedbypetname"
+          },
+          "occupiedByBookingId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occupiedbybookingid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kennelNumber",
+          "type",
+          "status"
+        ],
+        "title": "KennelOut",
+        "description": "FR-03.6 — also surfaces which pet currently occupies the kennel."
+      },
+      "KennelStatus": {
+        "type": "string",
+        "enum": [
+          "Available",
+          "Reserved",
+          "Occupied",
+          "Cleaning"
+        ],
+        "title": "KennelStatus"
+      },
+      "KennelUpdateIn": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/KennelStatus",
+            "examples": [
+              "Available"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "KennelUpdateIn",
+        "description": "FR-06.4 — staff updates kennel status (e.g. Cleaning → Available)."
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "examples": [
+              "P@ssw0rd!"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "MedicalRecordCreateIn": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "examples": [
+              "2025 年曾因皮膚過敏就診"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "title": "MedicalRecordCreateIn",
+        "description": "FR-02.2 — append only; never modified/deleted afterwards."
+      },
+      "MedicalRecordOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "petId",
+          "description",
+          "createdAt"
+        ],
+        "title": "MedicalRecordOut"
+      },
+      "MessageOut": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "examples": [
+              "ok"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "MessageOut",
+        "description": "Generic acknowledgement payload."
+      },
+      "Money": {
+        "properties": {
+          "amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Amount",
+            "examples": [
+              "1500.00"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Currency",
+            "default": "TWD",
+            "examples": [
+              "TWD"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount"
+        ],
+        "title": "Money",
+        "description": "SDD §3.5: monetary value as decimal + currency. Single-currency system\n(ECPay / Taiwan) so currency defaults to TWD."
+      },
+      "PasswordResetConfirmIn": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "title": "Newpassword"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "newPassword"
+        ],
+        "title": "PasswordResetConfirmIn"
+      },
+      "PasswordResetRequestIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "PasswordResetRequestIn"
+      },
+      "PaymentMethod": {
+        "type": "string",
+        "enum": [
+          "Online",
+          "CardOnSite"
+        ],
+        "title": "PaymentMethod"
+      },
+      "PaymentResultOut": {
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Transactionid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PaymentType"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PaymentStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transactionId",
+          "type",
+          "method",
+          "amount",
+          "status"
+        ],
+        "title": "PaymentResultOut"
+      },
+      "PaymentStatus": {
+        "type": "string",
+        "enum": [
+          "Pending",
+          "Authorized",
+          "Failed",
+          "Refunded"
+        ],
+        "title": "PaymentStatus"
+      },
+      "PaymentType": {
+        "type": "string",
+        "enum": [
+          "Deposit",
+          "FinalPay",
+          "Refund"
+        ],
+        "title": "PaymentType"
+      },
+      "PermissionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code"
+        ],
+        "title": "PermissionOut"
+      },
+      "PetCreateIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "examples": [
+              "旺財"
+            ]
+          },
+          "species": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Species",
+            "examples": [
+              "Dog"
+            ]
+          },
+          "breed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breed",
+            "examples": [
+              "柴犬"
+            ]
+          },
+          "birthDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birthdate"
+          },
+          "chipId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chipid",
+            "examples": [
+              "900123456789012"
+            ]
+          },
+          "behaviorNote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Behaviornote",
+            "examples": [
+              "怕生，不喜歡被碰腳"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "PetCreateIn",
+        "description": "FR-02.1 / 02.6 — basic profile + optional behaviour note."
+      },
+      "PetOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Ownerid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Species"
+          },
+          "breed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breed"
+          },
+          "birthDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birthdate"
+          },
+          "chipId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chipid"
+          },
+          "behaviorNote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Behaviornote"
+          },
+          "dangerLevel": {
+            "$ref": "#/components/schemas/DangerLevel"
+          },
+          "dangerNote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dangernote"
+          },
+          "isBlocked": {
+            "type": "boolean",
+            "title": "Isblocked"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "ownerId",
+          "name",
+          "dangerLevel",
+          "isBlocked",
+          "createdAt"
+        ],
+        "title": "PetOut"
+      },
+      "PetUpdateIn": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Species"
+          },
+          "breed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breed"
+          },
+          "birthDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birthdate"
+          },
+          "chipId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chipid"
+          },
+          "behaviorNote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Behaviornote"
+          }
+        },
+        "type": "object",
+        "title": "PetUpdateIn"
+      },
+      "ProfileUpdateIn": {
+        "properties": {
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdateIn",
+        "description": "FR-01.4 — users may edit their own name + phone."
+      },
+      "RefundOut": {
+        "properties": {
+          "eligible": {
+            "type": "boolean",
+            "title": "Eligible"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaymentStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "examples": [
+              "Refunded"
+            ]
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "examples": [
+              "取消時間距開始 > 24 小時，全額退還訂金"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "eligible",
+          "reason"
+        ],
+        "title": "RefundOut",
+        "description": "FR-05.4 — >24h before start: full deposit refund; ≤24h or no-show: none."
+      },
+      "RegisterIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "title": "Password",
+            "examples": [
+              "P@ssw0rd!"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Displayname",
+            "examples": [
+              "王小明"
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "examples": [
+              "0912345678"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "displayName"
+        ],
+        "title": "RegisterIn"
+      },
+      "ReviewDecision": {
+        "type": "string",
+        "enum": [
+          "Approved",
+          "Rejected"
+        ],
+        "title": "ReviewDecision"
+      },
+      "ReviewIn": {
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/ReviewDecision"
+          },
+          "staffNote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staffnote",
+            "examples": [
+              "已電話確認，核可"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "decision"
+        ],
+        "title": "ReviewIn"
+      },
+      "RoleAssignmentOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Accountid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Roleid"
+          },
+          "assignedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Assignedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "accountId",
+          "roleId",
+          "assignedAt"
+        ],
+        "title": "RoleAssignmentOut"
+      },
+      "RoleOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "RoleOut"
+      },
+      "RoomType": {
+        "type": "string",
+        "enum": [
+          "Standard",
+          "Deluxe"
+        ],
+        "title": "RoomType"
+      },
+      "ServiceCategory": {
+        "type": "string",
+        "enum": [
+          "Lodging",
+          "Grooming"
+        ],
+        "title": "ServiceCategory"
+      },
+      "ServiceItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "$ref": "#/components/schemas/ServiceCategory"
+          },
+          "basePrice": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "title": "Durationminutes"
+          },
+          "roomType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RoomType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "groomingType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GroomingType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isActive": {
+            "type": "boolean",
+            "title": "Isactive"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "basePrice",
+          "durationMinutes",
+          "isActive"
+        ],
+        "title": "ServiceItemOut"
+      },
+      "StaffCreateIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "title": "Password"
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Displayname"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "roleName": {
+            "type": "string",
+            "title": "Rolename",
+            "description": "FrontDesk | Groomer | Admin",
+            "examples": [
+              "FrontDesk"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "displayName",
+          "roleName"
+        ],
+        "title": "StaffCreateIn",
+        "description": "FR-01.2 — admin creates a staff account with a role."
+      },
+      "StageUpdateIn": {
+        "properties": {
+          "stage": {
+            "$ref": "#/components/schemas/GroomingStage",
+            "examples": [
+              "Bathing"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "stage"
+        ],
+        "title": "StageUpdateIn"
+      },
+      "TokenOut": {
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "title": "Accesstoken",
+            "examples": [
+              "<jwt>"
+            ]
+          },
+          "tokenType": {
+            "type": "string",
+            "title": "Tokentype",
+            "default": "bearer"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "title": "Expiresin",
+            "examples": [
+              3600
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "accessToken",
+          "expiresIn"
+        ],
+        "title": "TokenOut"
+      },
+      "VaccinationCreateIn": {
+        "properties": {
+          "vaccineName": {
+            "type": "string",
+            "title": "Vaccinename",
+            "examples": [
+              "狂犬病疫苗"
+            ]
+          },
+          "administeredAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Administeredat"
+          },
+          "expiresAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiresat",
+            "examples": [
+              "2026-12-31"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "vaccineName"
+        ],
+        "title": "VaccinationCreateIn",
+        "description": "FR-02.3 — owner pre-enters vaccine + expiry (optional data)."
+      },
+      "VaccinationRecordOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "vaccineName": {
+            "type": "string",
+            "title": "Vaccinename"
+          },
+          "administeredAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Administeredat"
+          },
+          "expiresAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiresat"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VaccinationStatus"
+          },
+          "verifiedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verifiedat"
+          },
+          "verifiedById": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verifiedbyid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "petId",
+          "vaccineName",
+          "status"
+        ],
+        "title": "VaccinationRecordOut"
+      },
+      "VaccinationStatus": {
+        "type": "string",
+        "enum": [
+          "Pending",
+          "Valid",
+          "Expired",
+          "Rejected"
+        ],
+        "title": "VaccinationStatus"
+      },
+      "VaccineProofDocumentOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "vaccinationRecordId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Vaccinationrecordid"
+          },
+          "fileUrl": {
+            "type": "string",
+            "title": "Fileurl"
+          },
+          "uploadedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uploadedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "vaccinationRecordId",
+          "fileUrl"
+        ],
+        "title": "VaccineProofDocumentOut"
+      },
+      "VaccineRecordAtCounterIn": {
+        "properties": {
+          "petId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Petid"
+          },
+          "vaccineName": {
+            "type": "string",
+            "title": "Vaccinename",
+            "examples": [
+              "狂犬病疫苗"
+            ]
+          },
+          "administeredAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Administeredat"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date",
+            "title": "Expiresat",
+            "examples": [
+              "2026-12-31"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "petId",
+          "vaccineName",
+          "expiresAt"
+        ],
+        "title": "VaccineRecordAtCounterIn",
+        "description": "FR-02.5 — staff records the vaccine at check-in; system auto-verifies\nexpiry (FR-06.1)."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkOrderDetailOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "bookingItemId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingitemid"
+          },
+          "assignedToId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assignedtoid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkStatus"
+          },
+          "startedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startedat"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completedat"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/WorkPhotoOut"
+            },
+            "type": "array",
+            "title": "Photos"
+          },
+          "emergencyEvent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmergencyEventOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "bookingItemId",
+          "assignedToId",
+          "status",
+          "createdAt"
+        ],
+        "title": "WorkOrderDetailOut"
+      },
+      "WorkOrderOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "bookingItemId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bookingitemid"
+          },
+          "assignedToId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assignedtoid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkStatus"
+          },
+          "startedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startedat"
+          },
+          "completedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completedat"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "bookingItemId",
+          "assignedToId",
+          "status",
+          "createdAt"
+        ],
+        "title": "WorkOrderOut"
+      },
+      "WorkPhotoOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "workOrderId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Workorderid"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "uploadedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uploadedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "workOrderId",
+          "url"
+        ],
+        "title": "WorkPhotoOut"
+      },
+      "WorkStatus": {
+        "type": "string",
+        "enum": [
+          "Pending",
+          "PreCheck",
+          "Bathing",
+          "Drying",
+          "Grooming",
+          "Completed",
+          "Aborted"
+        ],
+        "title": "WorkStatus"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "description": "Bearer JWT (enforced in S2)",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Gateway service — registration, login, password reset, self-profile (FR-01.1/01.4) + admin RBAC: roles, permissions, staff creation, account ban, abnormal-cancellation report (FR-01.2/01.3)."
+    },
+    {
+      "name": "Pets & Health",
+      "description": "Owner-facing resource — pet profiles, append-only medical records, vaccinations + proof upload, danger-level marking & unblock (FR-02.*)."
+    },
+    {
+      "name": "Booking",
+      "description": "Gateway service — create lodging/grooming bookings with danger gating, availability, list/history, deposit & final payment, staff review (FR-03.*, FR-05.3, FR-02.8)."
+    },
+    {
+      "name": "CheckIn",
+      "description": "Gateway service — front-desk check-in (booking+chip+vaccine), counter vaccine entry, check-out, kennel management (FR-04.1, FR-02.5, FR-06.1, FR-03.6/06.4)."
+    },
+    {
+      "name": "Grooming",
+      "description": "Gateway service — work-order lifecycle, 4-stage advance, photo upload, completion, emergency trigger (FR-04.2/04.4/04.5, FR-06.3)."
+    },
+    {
+      "name": "Cancellation",
+      "description": "Gateway service — cancel a booking and apply the 24h refund rule (FR-03.3, FR-05.4)."
+    }
+  ]
+}

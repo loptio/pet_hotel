@@ -1,0 +1,84 @@
+@startuml
+title 建立預約與支付訂金
+
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F8F8F8
+  BorderColor #333333
+  DiamondBackgroundColor #FFFFFF
+}
+
+|飼主|
+start
+:登入系統;
+:選擇寵物;
+:選擇服務類型（住宿/美容）;
+
+|系統|
+:檢查寵物危險等級;
+
+if (危險等級?) then (高度)
+  :拒絕預約並顯示警告;
+  stop
+else if (中度)
+  :建立待審核預約;
+  :寫入 Audit Log;
+  :通知櫃台人員審核;
+  note right: 審核通過後系統通知飼主\n繼續完成付款流程
+  stop
+else (無／低度)
+endif
+
+fork
+  :計算預估金額;
+fork again
+  :顯示可用時段;
+end fork
+
+repeat
+  |飼主|
+  :選擇預約時段;
+  |系統|
+  :驗證時段可用性;
+repeat while (時段是否可用?) is (不可用)
+->可用;
+
+|飼主|
+:確認訂單資訊;
+
+|系統|
+:鎖定時段資源;
+
+repeat
+  |飼主|
+  :選擇支付或放棄;
+
+  if (飼主決定?) then (支付訂金)
+
+    |金流服務 (ECPay)|
+    :執行付款交易;
+
+    |系統|
+    :回傳付款結果;
+
+    if (付款是否成功?) then (成功)
+      :建立預約紀錄;
+      :寫入 Audit Log;
+      :發送預約成功通知;
+      stop
+    else (失敗)
+      :釋放鎖定時段;
+      :顯示付款失敗提示;
+    endif
+
+  else (放棄訂單)
+    |系統|
+    :釋放鎖定時段;
+    stop
+  endif
+
+repeat while (付款是否成功?) is (失敗)
+
+stop
+@enduml
+

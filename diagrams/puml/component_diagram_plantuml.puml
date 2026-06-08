@@ -1,0 +1,130 @@
+@startuml
+title 系統元件圖（Component Diagram）
+
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam component {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+  FontName San Francisco
+}
+skinparam package {
+  BorderColor #999999
+  BackgroundColor #FAFAFA
+}
+
+package "Client Layer" {
+  [Mobile App\n(iOS / Android)] as MobileApp
+  [Web App\n(Browser)] as WebApp
+}
+
+package "API Gateway" {
+  [API Gateway] as GW
+}
+
+package "Application Layer" {
+  [BookingService] as BS
+  [CheckInService] as CIS
+  [GroomingService] as GS
+  [CancellationService] as CS
+  [PaymentService] as PAY
+  [NotificationService] as NS
+  [AuditService] as AS
+  [PetService] as PS
+  [KennelService] as KS
+  [AuthService] as AUTH
+}
+
+package "Domain Layer" {
+  [Account &\nAuthorization] as AuthDomain
+  [Pet &\nHealth Records] as PetDomain
+  [Booking &\nService Execution] as BookingDomain
+  [Payment, Notification\n& Audit] as PayAuditDomain
+}
+
+package "External Systems" <<Cloud>> {
+  [ECPay\n金流服務] as ECPay
+  [FCM / APNs\n推播服務] as PushGW
+}
+
+' === Client → API Gateway ===
+MobileApp --> GW
+WebApp --> GW
+
+' === API Gateway → Application Layer ===
+GW --> AUTH
+GW --> BS
+GW --> CIS
+GW --> GS
+GW --> CS
+
+' === Application Layer 內部依賴 ===
+BS --> PS
+BS --> PAY
+BS --> NS
+BS --> AS
+
+CIS --> PS
+CIS --> KS
+CIS --> NS
+CIS --> AS
+
+GS --> NS
+GS --> AS
+
+CS --> PAY
+CS --> NS
+CS --> AS
+
+' === Application Layer → Domain Layer ===
+AUTH ..> AuthDomain
+BS ..> BookingDomain
+CIS ..> BookingDomain
+GS ..> BookingDomain
+CS ..> BookingDomain
+PS ..> PetDomain
+KS ..> BookingDomain
+PAY ..> PayAuditDomain
+NS ..> PayAuditDomain
+AS ..> PayAuditDomain
+
+' === Application Layer → External Systems ===
+PAY --> ECPay
+NS --> PushGW
+
+' === Notes ===
+note bottom of BookingDomain
+  包含：Booking, BookingItem, BookedPet,
+  WorkOrder, WorkPhoto, EmergencyEvent,
+  ServiceItem, Kennel, AvailabilitySlot,
+  ResourceAllocation, CheckIn
+end note
+
+note bottom of PetDomain
+  包含：Pet, VaccinationRecord,
+  VaccineProofDocument, MedicalRecord
+end note
+
+note bottom of AuthDomain
+  包含：Account, Role,
+  Permission, RoleAssignment
+end note
+
+note bottom of PayAuditDomain
+  包含：PaymentTransaction,
+  Notification, AuditLog
+end note
+
+note right of ECPay
+  NFR-03：付款資訊不得
+  儲存於系統內部，須全程
+  由第三方金流處理
+end note
+
+note right of AUTH
+  FR-01.2：RBAC 角色存取控制
+  所有請求經 API Gateway
+  驗證身份後才進入各 Service
+end note
+
+@enduml

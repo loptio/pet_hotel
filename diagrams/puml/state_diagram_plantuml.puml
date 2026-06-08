@@ -1,0 +1,153 @@
+@startuml
+title Booking 生命週期狀態圖
+
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+  FontName San Francisco
+}
+
+state PendingDeposit : 等待支付訂金
+state PendingReview : 中度危險寵物\n等待櫃台審核通過
+state Confirmed : 訂金已付\n預約已確認
+state CheckedIn : 飼主已報到\n寵物交由工作人員
+state InProgress : 服務進行中
+state Completed : 服務完成\n等待結清尾款
+state Cancelled : 預約已取消
+state NoShow : 超過2小時未報到\n系統自動標記
+state Aborted : 觸發緊急事件\n服務異常終止
+
+[*] --> PendingDeposit : 建立預約\n(createBooking)
+
+PendingDeposit --> Confirmed : 付款成功\n(paymentSuccess)
+PendingDeposit --> PendingReview : 寵物危險等級為中度\n(dangerLevel == Medium)
+PendingDeposit --> Cancelled : 付款失敗或飼主放棄\n(paymentFailed / ownerAborted)
+
+PendingReview --> PendingDeposit : 櫃台審核通過\n(reviewBooking(Approved))
+PendingReview --> Cancelled : 審核拒絕\n(reviewRejected)
+
+Confirmed --> CheckedIn : 報到成功\n(checkInSuccess)
+Confirmed --> Cancelled : 飼主取消\n(ownerCancelled)
+Confirmed --> NoShow : 超過2小時未報到\n(autoMarkedNoShow)
+
+CheckedIn --> InProgress : 開始服務\n(workOrderStarted)
+InProgress --> Completed : 服務正常完成\n(workOrderCompleted)
+InProgress --> Aborted : 觸發緊急事件\n(emergencyTriggered)
+
+Completed --> [*]
+Cancelled --> [*]
+NoShow --> [*]
+Aborted --> [*]
+
+note right of PendingDeposit
+  FR-03.2：提交時即時驗證
+  房位、人力及時段可用性
+end note
+
+note right of PendingReview
+  FR-02.8：中度危險等級
+  須由櫃台審核通過方可確認
+end note
+
+note right of Cancelled
+  FR-05.4：24小時前取消全額退訂金
+  24小時內取消或未到場不退
+end note
+
+note right of NoShow
+  FR-03.5：預約開始後2小時
+  未完成報到自動標記
+end note
+
+@enduml
+
+
+@startuml
+title Kennel 床位狀態圖
+
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+  FontName San Francisco
+}
+
+state Available : 床位空閒\n可接受新預約
+state Reserved : 已被預約鎖定\n等待飼主報到
+state Occupied : 寵物已入住\n床位使用中
+state Cleaning : 寵物離開後\n等待清潔完成
+
+[*] --> Available : 系統初始化
+
+Available --> Reserved : 飼主完成預約\n(bookingConfirmed)
+Reserved --> Available : 預約取消或未到場\n(bookingCancelled / noShow)
+Reserved --> Occupied : 報到成功並分配床位\n(checkInSuccess)
+Occupied --> Cleaning : 寵物離開\n(petCheckedOut)
+Cleaning --> Available : 清潔完成\n(cleaningCompleted by Staff)
+
+note right of Reserved
+  FR-03.2：嚴禁超額預約
+  同一時段同一床位不可重複預約
+end note
+
+note right of Cleaning
+  FR-06.4：清潔完成後
+  由櫃台人員手動標記為空床
+end note
+
+@enduml
+
+
+@startuml
+title WorkOrder 服務狀態圖
+
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+  FontName San Francisco
+}
+
+state Pending : 工作單已建立\n等待美容師開始
+state PreCheck : 預檢中\n檢查寵物狀況
+state Bathing : 洗澡中
+state Drying : 烘乾中
+state Grooming : 剪毛中
+state Completed : 服務完成\n通知飼主領回
+state Aborted : 觸發緊急事件\n服務異常終止
+
+[*] --> Pending : 報到完成建立工作單\n(checkInSuccess)
+
+Pending --> PreCheck : 美容師開啟工作單\n(workOrderStarted)
+Pending --> Aborted : 觸發緊急事件\n(emergencyTriggered)
+PreCheck --> Bathing : 預檢完成\n(preCheckCompleted)
+Bathing --> Drying : 洗澡完成\n(bathingCompleted)
+Drying --> Grooming : 烘乾完成\n(dryingCompleted)
+Grooming --> Completed : 剪毛完成並確認\n(groomingCompleted)
+
+PreCheck --> Aborted : 觸發緊急事件\n(emergencyTriggered)
+Bathing --> Aborted : 觸發緊急事件\n(emergencyTriggered)
+Drying --> Aborted : 觸發緊急事件\n(emergencyTriggered)
+Grooming --> Aborted : 觸發緊急事件\n(emergencyTriggered)
+
+Completed --> [*]
+Aborted --> [*]
+
+note right of Pending
+  FR-04.5：美容服務工作單
+  包含預檢、洗澡、烘乾、剪毛四個階段
+end note
+
+note right of Aborted
+  FR-06.3：工作人員手動觸發
+  緊急醫療事件流程
+  系統強制要求錄入事件描述
+end note
+
+note right of Completed
+  FR-04.3：服務完成時
+  系統自動推播通知飼主
+end note
+
+@enduml

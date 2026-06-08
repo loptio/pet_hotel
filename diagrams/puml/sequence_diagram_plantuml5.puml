@@ -1,0 +1,90 @@
+@startuml
+title 場景五：櫃台審核待審核預約
+
+autonumber
+skinparam titleFontSize 18
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+
+actor "櫃台人員" as Staff
+actor "飼主" as Owner
+participant "Frontend" as FE
+participant "BookingService" as BS
+participant "PaymentService" as PAY
+participant "NotificationService" as NS
+participant "AuditService" as AS
+participant "ECPay" as ECPay <<external>>
+
+Staff -> FE : 查看待審核預約列表
+activate FE
+FE -> BS : getPendingReviewBookings()
+activate BS
+BS --> FE : bookings[]
+deactivate BS
+FE --> Staff : 顯示待審核預約列表
+deactivate FE
+
+Staff -> FE : 審核預約(bookingId, decision, staffNote)
+activate FE
+FE -> BS : reviewBooking(bookingId, decision, staffNote)
+activate BS
+
+alt decision == Approved
+  BS -> BS : setStatus(PendingDeposit)
+  BS ->> AS : append(BookingApproved, bookingId)
+  BS ->> NS : notify(Owner, "預約已通過審核，請完成付款")
+  BS --> FE : approved(bookingId)
+  deactivate BS
+  FE --> Staff : 顯示審核通過
+  deactivate FE
+
+  == 飼主收到通知後完成付款 ==
+
+  note over FE : 以下為飼主端操作
+
+  Owner -> FE : 進入付款頁面(bookingId)
+  activate FE
+  FE -> BS : initiatePayment(bookingId, paymentMethod)
+  activate BS
+  BS -> PAY : charge(bookingId, depositAmount, paymentMethod)
+  activate PAY
+
+  PAY -> ECPay : authorize(amount, method)
+  activate ECPay
+  ECPay --> PAY : authResult
+  deactivate ECPay
+
+  alt 付款成功
+    PAY --> BS : paymentSuccess(transactionId)
+    deactivate PAY
+    BS -> BS : setStatus(Confirmed)
+    BS ->> AS : append(BookingConfirmed, bookingId)
+    BS ->> NS : notify(Owner, "付款成功，預約已確認")
+    BS --> FE : bookingConfirmed(bookingId)
+    deactivate BS
+    FE --> Owner : 顯示預約確認
+    deactivate FE
+
+  else 付款失敗
+    PAY --> BS : paymentFailed(reason)
+    deactivate PAY
+    BS ->> AS : append(PaymentFailed, bookingId)
+    BS --> FE : paymentFailed(reason)
+    deactivate BS
+    FE --> Owner : 顯示付款失敗，可重試
+    deactivate FE
+  end
+
+else decision == Rejected
+  BS -> BS : setStatus(Cancelled)
+  BS -> BS : setCancelReason(staffNote)
+  BS ->> AS : append(BookingRejected, bookingId)
+  BS ->> NS : notify(Owner, "預約未通過審核：" + staffNote)
+  BS --> FE : rejected(bookingId)
+  deactivate BS
+  FE --> Staff : 顯示審核拒絕
+  deactivate FE
+end
+
+@enduml

@@ -1,0 +1,380 @@
+@startuml
+title Pet Hotel & Grooming Management System - Class Diagram
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+<style>
+class {
+  BackgroundColor #FDFDFD
+  BorderColor #333333
+  FontName San Francisco
+}
+package {
+  BorderColor #999999
+  BackgroundColor #FAFAFA
+}
+</style>
+
+package "Account & Authorization" {
+  class Account {
+    +id: UUID
+    +email: String
+    +passwordHash: String
+    +displayName: String
+    +phone: String
+    +status: AccountStatus
+    +createdAt: DateTime
+  }
+
+  class Role {
+    +id: UUID
+    +name: String
+  }
+
+  class Permission {
+    +id: UUID
+    +code: String
+    +description: String
+  }
+
+  class RoleAssignment {
+    +id: UUID
+    +assignedAt: DateTime
+  }
+
+  enum AccountStatus {
+    Active
+    Banned
+    Disabled
+  }
+
+  Account "1" o-- "0..*" RoleAssignment
+  RoleAssignment "1" --> "1" Role
+  Role "1" o-- "0..*" Permission
+}
+
+package "Pet & Health Records" {
+  class Pet {
+    +id: UUID
+    +name: String
+    +species: String
+    +breed: String
+    +birthDate: Date
+    +chipId: String
+    +behaviorNote: String
+    +dangerLevel: DangerLevel
+    +dangerNote: String
+    +isBlocked: Boolean
+  }
+
+  class VaccinationRecord {
+    +id: UUID
+    +vaccineName: String
+    +administeredAt: Date
+    +expiresAt: Date
+    +status: VaccinationStatus
+    +verifiedAt: DateTime
+  }
+
+  class VaccineProofDocument {
+    +id: UUID
+    +fileUrl: String
+    +uploadedAt: DateTime
+  }
+
+  class MedicalRecord {
+    +id: UUID
+    +description: String
+    +createdAt: DateTime
+  }
+
+  enum VaccinationStatus {
+    Pending
+    Valid
+    Expired
+    Rejected
+  }
+
+  enum DangerLevel {
+    None
+    Low
+    Medium
+    High
+  }
+
+  Account "1" --> "0..*" Pet : owns
+  Pet "1" *-- "0..*" VaccinationRecord
+  VaccinationRecord "1" *-- "0..1" VaccineProofDocument
+  Pet "1" *-- "0..*" MedicalRecord
+  VaccinationRecord "0..*" --> "0..1" Account : verifiedBy(Staff)
+}
+
+package "Booking & Service Execution" {
+
+  abstract class ServiceItem {
+    +id: UUID
+    +name: String
+    +category: ServiceCategory
+    +basePrice: Money
+    +durationMinutes: Int
+  }
+
+  class LodgingService {
+    +roomType: RoomType
+  }
+
+  class GroomingService {
+    +groomingType: GroomingType
+  }
+
+  enum ServiceCategory {
+    Lodging
+    Grooming
+  }
+
+  enum RoomType {
+    Standard
+    Deluxe
+  }
+
+  enum GroomingType {
+    Basic
+    Full
+  }
+
+  class Kennel {
+    +id: UUID
+    +kennelNumber: String
+    +type: RoomType
+    +status: KennelStatus
+  }
+
+  enum KennelStatus {
+    Available
+    Reserved
+    Occupied
+    Cleaning
+  }
+
+  class Booking {
+    +id: UUID
+    +status: BookingStatus
+    +startAt: DateTime
+    +endAt: DateTime
+    +totalAmount: Money
+    +depositAmount: Money
+    +cancelledAt: DateTime
+    +cancelReason: String
+    +createdAt: DateTime
+  }
+
+  enum BookingStatus {
+    PendingDeposit
+    PendingReview
+    Confirmed
+    Cancelled
+    CheckedIn
+    InProgress
+    Completed
+    Aborted
+    NoShow
+  }
+
+  class BookingItem {
+    +id: UUID
+    +unitPrice: Money
+    +quantity: Int
+  }
+
+  class BookedPet {
+    +id: UUID
+  }
+
+  class AvailabilitySlot {
+    +id: UUID
+    +startAt: DateTime
+    +endAt: DateTime
+    +capacity: Int
+  }
+
+  class ResourceAllocation {
+    +id: UUID
+    +resourceType: String
+    +resourceId: String
+    +lockedAt: DateTime
+    +releasedAt: DateTime
+  }
+
+  class CheckIn {
+    +id: UUID
+    +checkedInAt: DateTime
+    +checkedOutAt: DateTime
+    +result: CheckInResult
+  }
+
+  enum CheckInResult {
+    Success
+    Blocked
+  }
+
+  class WorkOrder {
+    +id: UUID
+    +status: WorkStatus
+    +startedAt: DateTime
+    +completedAt: DateTime
+  }
+
+  enum WorkStatus {
+    Pending
+    PreCheck
+    Bathing
+    Drying
+    Grooming
+    Completed
+    Aborted
+  }
+
+  class WorkPhoto {
+    +id: UUID
+    +url: String
+    +uploadedAt: DateTime
+  }
+
+  class EmergencyEvent {
+    +id: UUID
+    +description: String
+    +occurredAt: DateTime
+  }
+
+  ServiceItem <|-- LodgingService
+  ServiceItem <|-- GroomingService
+
+  Account "1" --> "0..*" Booking : createdBy(Owner)
+  Booking "1" *-- "1..*" BookedPet
+  BookedPet "1" --> "1" Pet
+  BookedPet "0..1" --> "0..1" Kennel : assignedTo
+  Booking "1" *-- "1..*" BookingItem
+  BookingItem "0..*" --> "1" ServiceItem
+  BookingItem "1" --> "1" BookedPet
+  BookingItem ..> AvailabilitySlot : checkAvailability
+  AvailabilitySlot "0..*" --> "1" ServiceItem
+  Booking "1" *-- "0..*" ResourceAllocation
+  Booking "1" *-- "0..1" CheckIn
+  BookingItem "1" *-- "0..1" WorkOrder
+  CheckIn "1" --> "1" Account : handledBy(Staff)
+  WorkOrder "1" --> "1" Account : assignedTo(Groomer)
+  WorkOrder "1" *-- "0..*" WorkPhoto
+  ' FR-06.3 修訂(S1 審)：EmergencyEvent 改掛 Booking 層——櫃台或美容師皆可觸發，住宿(無 WorkOrder)亦能記錄
+  Booking "1" *-- "0..*" EmergencyEvent
+  EmergencyEvent "0..*" --> "1" Pet : about
+  EmergencyEvent "0..1" --> "0..1" WorkOrder : duringStage
+  EmergencyEvent "0..*" --> "1" Account : reportedBy
+}
+
+package "Payment, Notification & Audit" {
+  class PaymentTransaction {
+    +id: UUID
+    +type: PaymentType
+    +method: PaymentMethod
+    +amount: Money
+    +status: PaymentStatus
+    +provider: PaymentProvider
+    +providerTxnId: String
+    +createdAt: DateTime
+  }
+
+  enum PaymentType {
+    Deposit
+    FinalPay
+    Refund
+  }
+
+  enum PaymentMethod {
+    Online
+    CardOnSite
+  }
+
+  enum PaymentStatus {
+    Pending
+    Authorized
+    Failed
+    Refunded
+  }
+
+  enum PaymentProvider {
+    ECPay
+  }
+
+  interface PaymentGateway <<external>> {
+    +authorize(amount: Money): String
+    +refund(txnId: String, amount: Money): Boolean
+  }
+
+  class Notification {
+    +id: UUID
+    +recipientId: UUID
+    +type: NotificationType
+    +title: String
+    +message: String
+    +sentAt: DateTime
+    +status: NotificationStatus
+  }
+
+  enum NotificationType {
+    BookingCreated
+    CheckInSuccess
+    VaccineExpired
+    ServiceStageUpdated
+    ServiceCompleted
+    Emergency
+  }
+
+  enum NotificationStatus {
+    Pending
+    Sent
+    Failed
+  }
+
+  interface PushGateway <<external>> {
+    +send(to: String, title: String, message: String): Boolean
+  }
+
+  class AuditLog {
+    +id: UUID
+    +actionType: AuditActionType
+    +entityType: String
+    +entityId: String
+    +operatorId: UUID
+    +createdAt: DateTime
+  }
+
+  enum AuditActionType {
+    BookingCreated
+    BookingCancelled
+    CheckInSuccess
+    CheckInBlocked
+    ServiceStatusChanged
+    PaymentProcessed
+    EmergencyTriggered
+    DangerLevelUpdated
+    KennelStatusChanged
+  }
+
+  Booking "1" *-- "0..*" PaymentTransaction
+  PaymentTransaction ..> PaymentGateway
+  Booking "1" --> "0..*" Notification
+  Notification ..> PushGateway
+
+  note bottom of AuditLog
+    Standalone entity, not owned by any aggregate.
+    entityType + entityId can reference:
+    Booking, WorkOrder, PaymentTransaction,
+    EmergencyEvent, Pet, Kennel.
+    Conforms to FR-05.2: audit logs are
+    immutable and permanently retained.
+  end note
+}
+
+@enduml

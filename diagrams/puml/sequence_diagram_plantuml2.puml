@@ -1,0 +1,107 @@
+@startuml
+title 場景二：櫃台報到與疫苗驗證
+
+autonumber
+skinparam titleFontSize 18
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+actor "櫃台人員" as Staff
+participant "Frontend" as FE
+participant "CheckInService" as CIS
+participant "PetService" as PS
+participant "KennelService" as KS
+participant "NotificationService" as NS
+participant "AuditService" as AS
+
+Staff -> FE : 掃描晶片 / 輸入預約單號
+activate FE
+FE -> CIS : checkIn(bookingId, chipId)
+activate CIS
+
+CIS -> CIS : validateBooking(bookingId)
+
+alt 預約無效
+  CIS --> FE : error(invalidBooking)
+  deactivate CIS
+  FE --> Staff : 顯示錯誤提示
+  deactivate FE
+
+else 預約有效
+  CIS -> CIS : verifyChipId(chipId, petId)
+
+  alt 晶片號碼不符
+    CIS --> FE : error("晶片號碼與預約寵物不符")
+    deactivate CIS
+    FE --> Staff : 顯示晶片核對失敗
+    deactivate FE
+
+  else 晶片號碼正確
+    CIS --> FE : bookingValid(bookingInfo)
+    deactivate CIS
+    FE --> Staff : 顯示預約資訊，請核對疫苗文件
+    deactivate FE
+
+    Staff -> FE : submitVaccineRecord(petId, vaccineName, expiryDate)
+    activate FE
+    FE -> CIS : recordVaccine(petId, vaccineName, expiryDate)
+    activate CIS
+    CIS -> PS : saveVaccinationRecord(petId, record)
+    activate PS
+    PS --> CIS : saved
+    deactivate PS
+
+    CIS -> PS : verifyVaccination(petId)
+    activate PS
+    PS --> CIS : vaccinationStatus: VaccinationStatus
+    deactivate PS
+
+    alt vaccinationStatus == Expired
+      CIS -> CIS : setResult(Blocked)
+      CIS ->> AS : append(CheckInBlocked, bookingId)
+      CIS ->> NS : notify(ownerId, "疫苗逾期，請補件")
+      CIS --> FE : blocked(reason=VaccineExpired)
+      deactivate CIS
+      FE --> Staff : 顯示疫苗逾期異常提示
+      deactivate FE
+
+    else vaccinationStatus == Valid
+      CIS -> PS : checkDangerLevel(petId)
+      activate PS
+      PS --> CIS : dangerLevel: DangerLevel
+      deactivate PS
+
+      opt dangerLevel == Low
+        CIS --> FE : warning(dangerLevel=Low)
+        FE --> Staff : 顯示低度危險警告
+      end
+
+      opt serviceType == Lodging
+        CIS -> KS : assignKennel(bookedPetId, roomType)
+        activate KS
+        KS -> KS : findAvailable(roomType)
+        KS -> KS : setStatus(Occupied)
+        KS --> CIS : kennelNumber
+        deactivate KS
+      end
+
+      CIS -> CIS : setResult(Success)
+      CIS -> CIS : updateBookingStatus(CheckedIn)
+      CIS ->> AS : append(CheckInSuccess, bookingId)
+
+      opt serviceType == Lodging
+        CIS ->> NS : notify(ownerId, "報到成功，床位: " + kennelNumber)
+      end
+      opt serviceType == Grooming
+        CIS ->> NS : notify(ownerId, "報到成功")
+      end
+
+      CIS --> FE : checkInSuccess(kennelNumber)
+      deactivate CIS
+      FE --> Staff : 顯示報到成功
+      deactivate FE
+    end
+  end
+end
+
+@enduml

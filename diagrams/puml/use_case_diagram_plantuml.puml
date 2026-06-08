@@ -1,0 +1,171 @@
+@startuml
+title 寵物旅館與美容管理系統 — Use Case Diagram
+
+left to right direction
+
+<style>
+document {
+    linetype ortho
+    Shadowing 0
+}
+usecase {
+    BackgroundColor #fdfdfd
+    BorderColor #333333
+    FontName San Francisco
+    FontSize 14
+}
+package {
+    FontColor #444444
+    BorderColor #999999
+    BackgroundColor #FAFAFA
+    LineThickness 1.5
+}
+actor {
+    LineColor #333333
+    FontName San Francisco
+}
+note {
+    BackgroundColor #FFF9C4
+    BorderColor #FBC02D
+    FontSize 12
+}
+</style>
+
+actor "飼主" as Owner
+actor "櫃台人員" as Staff
+actor "美容師" as Groomer
+actor "系統管理員" as Admin
+
+rectangle "外部系統" <<Secondary>> {
+    actor "金流服務\nEC Pay" as ECPay <<system>>
+    actor "通知服務\nFCM/APNs" as Notifier <<system>>
+}
+
+rectangle "寵物預約管理系統" {
+
+    usecase "結清尾款" as UC_FinalPay
+    usecase "驗證可用性" as UC_CheckAvail
+    usecase "支付訂金" as UC_PrePay
+    usecase "處理退款" as UC_Refund
+    usecase "觸發緊急事件" as UC_Emergency
+    usecase "錄入事件描述" as UC_EmergencyDesc
+    usecase "標記危險等級" as UC_MarkDanger
+
+    package "飼主" {
+        usecase "註冊帳號" as UC_Reg
+        usecase "查看服務進度" as UC_Track
+        usecase "查詢預約紀錄" as UC_History
+        usecase "管理寵物檔案" as UC_ManagePet
+        usecase "建立住宿預約" as UC_BookLodging
+        usecase "建立美容預約" as UC_BookGrooming
+        usecase "取消預約" as UC_Cancel
+        usecase "上傳疫苗證明" as UC_UploadVax
+    }
+
+    package "櫃台人員" {
+        usecase "辦理報到" as UC_CheckIn
+        usecase "錄入疫苗紀錄" as UC_InputVax
+        usecase "核驗預約狀態" as UC_VerifyBooking
+        usecase "審核待審核預約" as UC_ReviewPending
+        usecase "管理床位狀態" as UC_ManageKennel
+    }
+
+    package "系統管理員" {
+        usecase "管理角色權限" as UC_RBAC
+        usecase "管理帳號封禁" as UC_Report
+        usecase "建立員工帳號" as UC_CreateStaff
+        usecase "解除寵物封鎖" as UC_UnblockPet
+    }
+
+    package "美容師" {
+        usecase "更新服務狀態" as UC_UpdateStatus
+        usecase "發送通知" as UC_SendNoti
+    }
+
+    usecase "登入系統" as UC_Login
+    usecase "管理個人資料" as UC_Profile
+    usecase "重設密碼" as UC_ResetPwd
+}
+
+' === Actor 連線 ===
+Owner --> UC_Reg
+Owner --> UC_ManagePet
+Owner --> UC_BookLodging
+Owner --> UC_BookGrooming
+Owner --> UC_Track
+Owner --> UC_History
+Owner --> UC_Cancel
+Owner --> UC_FinalPay
+
+Staff --> UC_CheckIn
+Staff --> UC_Emergency
+Staff --> UC_FinalPay
+Staff --> UC_ReviewPending
+Staff --> UC_ManageKennel
+Staff --> UC_MarkDanger
+
+Groomer --> UC_UpdateStatus
+Groomer --> UC_Emergency
+Groomer --> UC_MarkDanger
+
+Admin --> UC_RBAC
+Admin --> UC_Report
+Admin --> UC_MarkDanger
+Admin --> UC_UnblockPet
+
+' === Include ===
+UC_ManagePet <.. UC_UploadVax : <<extend>>
+UC_BookLodging ..> UC_PrePay : <<include>>
+UC_BookLodging ..> UC_CheckAvail : <<include>>
+UC_BookGrooming ..> UC_PrePay : <<include>>
+UC_BookGrooming ..> UC_CheckAvail : <<include>>
+UC_Cancel ..> UC_Refund : <<include>>
+UC_CheckIn ..> UC_VerifyBooking : <<include>>
+UC_CheckIn <.. UC_InputVax : <<extend>>
+UC_Emergency ..> UC_EmergencyDesc : <<include>>
+UC_UpdateStatus ..> UC_SendNoti : <<include>>
+UC_RBAC <.. UC_CreateStaff : <<extend>>
+UC_Emergency ..> UC_SendNoti : <<include>>
+
+' === Extend ===
+UC_ReviewPending ..> UC_BookLodging : <<extend>>\n{dangerLevel == Medium}
+UC_ReviewPending ..> UC_BookGrooming : <<extend>>\n{dangerLevel == Medium}
+
+' === 外部系統 ===
+UC_FinalPay -- ECPay
+UC_PrePay -- ECPay
+UC_Refund -- ECPay
+UC_SendNoti -- Notifier
+
+' === Notes ===
+note top of UC_Login
+  所有用例均須登入後執行
+  (除註冊、重設密碼外)
+end note
+
+note "登入、管理個人資料、重設密碼\n適用於所有角色，不另行連線\n以保持圖面清晰。" as N_Common
+UC_Login .. N_Common
+UC_Profile .. N_Common
+UC_ResetPwd .. N_Common
+
+note as N_Auto
+  系統自動行為（無需 Actor）：
+  · 預約開始後 2 小時未報到
+    自動標記「未到場」(FR-03.5)
+  · 中度危險預約自動進入待審核
+  · 高度危險自動拒絕預約 (FR-02.8)
+  · 床位狀態自動更新 (FR-06.4)
+end note
+
+note right of UC_MarkDanger
+  FR-02.7/02.8：
+  櫃台/美容師：低度、中度
+  管理員：高度（含解除封鎖）
+end note
+
+note right of UC_Track
+  包含查看美容師上傳之
+  作業照片 (FR-04.4)
+end note
+
+@enduml
