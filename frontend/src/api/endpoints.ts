@@ -54,6 +54,9 @@ export const petApi = {
   create: (body: PetCreateIn) => api.post<PetOut>("/pets", body),
   vaccinations: (id: string) => api.get<VaccinationRecordOut[]>(`/pets/${id}/vaccinations`),
   medicalRecords: (id: string) => api.get<MedicalRecordOut[]>(`/pets/${id}/medical-records`),
+  markDanger: (id: string, body: { dangerLevel: import("./types").DangerLevel; dangerNote: string }) =>
+    api.post<PetOut>(`/pets/${id}/danger-level`, body),
+  unblock: (id: string) => api.post<PetOut>(`/pets/${id}/unblock`),
 }
 
 // ---------- bookings ----------
