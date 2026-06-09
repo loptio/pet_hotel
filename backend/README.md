@@ -1,4 +1,4 @@
-# backend/ — FastAPI 模組化單體（S1）
+# backend/ — FastAPI 模組化單體
 
 對著 `../contracts/`（API 契約）與 `../docs/SDD.md`（資料模型/狀態機）做。跑法見專案根 `../README.md`「快速開始」。
 
@@ -6,11 +6,11 @@
 ```
 app/
 ├── main.py              FastAPI app；掛載 6 個對外路由於 /api/v1
-├── core/                config・database(Base+mixins+pg_enum)・security(stub)
+├── core/                config・database(Base+mixins+pg_enum)・security(JWT + RBAC)
 ├── common/              CamelModel・Money・ErrorOut・not_implemented(501)
 ├── db/base.py           匯入全部 models（供 Alembic metadata / 入口註冊）
 └── modules/             auth・pet・booking・checkin・grooming・cancellation・payment・notification・audit
-                         每模組 = models + schemas + service(樁) + router
+                         每模組 = models + schemas + service + router
 alembic/                 env.py + versions/（初始 migration）
 scripts/                 seed.py（幂等）・export_openapi.py
 ```
@@ -20,8 +20,8 @@ scripts/                 seed.py（幂等）・export_openapi.py
 - **內部（無 router）**：payment・notification・audit — 只有 models＋service 樁，由其他服務內部呼叫。
 - 對外只暴露 5 大 Gateway 服務（Auth/Booking/CheckIn/Grooming/Cancellation）＋飼主面 Pets&Health；詳見 `../contracts/api-overview.md`。
 
-## S1 約定
-- 路由樁回 **501**，但 request/response schema 是真的（業務邏輯/狀態機 → S2）。
+## 約定
+- 業務邏輯與三狀態機（Booking 9 / WorkOrder 7 / Kennel 4）**已全數實作、140 項 pytest 全綠**；契約自凍結後 byte-identical 未漂移。
 - UUID 主鍵；JSON body camelCase、URL snake_case；金額 `Money{amount,currency}`。
 - Enum 照類圖（`PaymentMethod` 無 cash）；`AuditLog` 由 DB trigger 禁 UPDATE/DELETE。
 
