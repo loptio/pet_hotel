@@ -2,6 +2,14 @@
 import { api } from "./client"
 import type {
   AccountOut,
+  AssignRoleIn,
+  BanAccountIn,
+  CancellationReportOut,
+  MessageOut,
+  PermissionOut,
+  RoleAssignmentOut,
+  RoleOut,
+  StaffCreateIn,
   AvailabilityOut,
   BookingCreateIn,
   BookingDetailOut,
@@ -45,6 +53,22 @@ const qs = (o: Record<string, string | undefined>) => {
 export const authApi = {
   login: (email: string, password: string) => api.post<TokenOut>("/auth/login", { email, password }),
   me: () => api.get<AccountOut>("/auth/me"),
+}
+
+// ---------- admin / RBAC (Admin only; backend enforces require_roles) ----------
+export const adminApi = {
+  accounts: () => api.get<AccountOut[]>("/auth/accounts"),
+  ban: (id: string, body: BanAccountIn) => api.post<AccountOut>(`/auth/accounts/${id}/ban`, body),
+  unban: (id: string) => api.post<AccountOut>(`/auth/accounts/${id}/unban`),
+  createStaff: (body: StaffCreateIn) => api.post<AccountOut>("/auth/staff", body),
+  assignRole: (id: string, body: AssignRoleIn) =>
+    api.post<RoleAssignmentOut>(`/auth/accounts/${id}/roles`, body),
+  removeRole: (id: string, roleId: string) =>
+    api.del<MessageOut>(`/auth/accounts/${id}/roles/${roleId}`),
+  roles: () => api.get<RoleOut[]>("/auth/roles"),
+  permissions: () => api.get<PermissionOut[]>("/auth/permissions"),
+  abnormalCancellations: () =>
+    api.get<CancellationReportOut>("/auth/reports/abnormal-cancellations"),
 }
 
 // ---------- pets ----------

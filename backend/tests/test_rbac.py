@@ -75,11 +75,15 @@ def test_admin_allowed_on_admin_endpoint(client, make_account, auth_headers):
     assert r.status_code == 200
 
 
-def test_groomer_forbidden_from_owner_endpoint(client, make_account, auth_headers):
-    """Listing 'my pets' is Owner-only; a groomer is rejected."""
+def test_pets_list_is_staff_aware_but_writes_owner_only(client, make_account, auth_headers):
+    """GET /pets is staff-aware (S3b: admin danger-pets page needs all pets), so a
+    groomer may LIST pets; but owner-only writes (create) still reject staff."""
     groomer = make_account(role="Groomer")
-    r = client.get("/api/v1/pets", headers=auth_headers(groomer))
-    assert r.status_code == 403
+    assert client.get("/api/v1/pets", headers=auth_headers(groomer)).status_code == 200
+    assert (
+        client.post("/api/v1/pets", json={"name": "x"}, headers=auth_headers(groomer)).status_code
+        == 403
+    )
 
 
 def test_banned_account_token_is_403(client, make_account, auth_headers):

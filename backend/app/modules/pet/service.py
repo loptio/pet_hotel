@@ -78,12 +78,15 @@ class PetService:
         db.refresh(pet)
         return pet
 
-    def list_pets(self, db: Session, owner_id: uuid.UUID) -> list[Pet]:
-        return list(
-            db.execute(
-                select(Pet).where(Pet.owner_id == owner_id).order_by(Pet.created_at)
-            ).scalars().all()
-        )
+    def list_pets(self, db: Session, principal: Principal) -> list[Pet]:
+        """Owner sees their own pets; staff (FrontDesk/Groomer/Admin) see all —
+        needed so the admin danger-pets page can list every pet. Same path /
+        params / response (PetOut[]) as the frozen contract (S3b behaviour fix,
+        mirrors the staff-aware list_bookings)."""
+        stmt = select(Pet)
+        if not (principal.roles & STAFF_ROLES):
+            stmt = stmt.where(Pet.owner_id == principal.account_id)
+        return list(db.execute(stmt.order_by(Pet.created_at)).scalars().all())
 
     def update_pet(
         self, db: Session, pet_id: uuid.UUID, owner_id: uuid.UUID, body: s.PetUpdateIn

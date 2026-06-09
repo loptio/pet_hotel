@@ -79,6 +79,9 @@ export const api = {
       body: body === undefined ? undefined : JSON.stringify(body),
     }).then((r) => handle<T>(r)),
 
+  del: <T>(path: string) =>
+    fetch(BASE + path, { method: "DELETE", headers: { ...authHeaders() } }).then((r) => handle<T>(r)),
+
   // multipart upload (work photos / vaccine proof) — no JSON content-type
   upload: <T>(path: string, file: File, field = "file") => {
     const fd = new FormData()

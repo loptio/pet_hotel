@@ -58,6 +58,50 @@ export interface AccountOut {
   createdAt: string
 }
 
+// ---------- admin / RBAC ----------
+export interface RoleOut {
+  id: string
+  name: string
+}
+export interface PermissionOut {
+  id: string
+  code: string
+  description?: string | null
+}
+export interface StaffCreateIn {
+  email: string
+  password: string
+  displayName: string
+  phone?: string | null
+  roleName: string
+}
+export interface AssignRoleIn {
+  roleId: string
+}
+export interface RoleAssignmentOut {
+  id: string
+  accountId: string
+  roleId: string
+  assignedAt: string
+}
+export interface BanAccountIn {
+  reason?: string | null
+}
+export interface MessageOut {
+  message: string
+}
+export interface CancellationReportRow {
+  bookingId: string
+  ownerId: string
+  cancelledAt?: string | null
+  cancelReason?: string | null
+  refunded: boolean
+}
+export interface CancellationReportOut {
+  total: number
+  rows: CancellationReportRow[]
+}
+
 // ---------- pet & health ----------
 export interface PetOut {
   id: string

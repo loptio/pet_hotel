@@ -35,8 +35,9 @@ def create_pet(body: s.PetCreateIn, principal: Principal = owner_only, db: Sessi
 
 
 @router.get("", response_model=list[s.PetOut], summary="List my pets (FR-02.1)")
-def list_pets(principal: Principal = owner_only, db: Session = Depends(get_db)):
-    return pet_service.list_pets(db, principal.account_id)
+def list_pets(principal: Principal = authenticated, db: Session = Depends(get_db)):
+    # Owner → own pets; staff/admin → all pets (staff-aware, service enforces).
+    return pet_service.list_pets(db, principal)
 
 
 @router.get("/{pet_id}", response_model=s.PetOut, summary="Get a pet profile")

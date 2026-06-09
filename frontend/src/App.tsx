@@ -57,10 +57,13 @@ export default function App() {
           <Route path="pending-review" element={<PendingReviewPage />} />
           <Route path="work-orders" element={<WorkOrdersPage />} />
           <Route path="work-orders/:id" element={<WorkOrderDetailPage />} />
-          <Route path="accounts" element={<AccountsPage />} />
-          <Route path="roles" element={<RolesPage />} />
-          <Route path="danger-pets" element={<DangerPetsPage />} />
-          <Route path="reports" element={<ReportsPage />} />
+          {/* admin-only RBAC pages — frontdesk/groomer are redirected away */}
+          <Route element={<RequireAuth roles={["Admin"]} />}>
+            <Route path="accounts" element={<AccountsPage />} />
+            <Route path="roles" element={<RolesPage />} />
+            <Route path="danger-pets" element={<DangerPetsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+          </Route>
         </Route>
       </Route>
 
