@@ -41,6 +41,7 @@ import { Alert } from "@/components/ui/alert"
 import { Overlay } from "@/components/ui/overlay"
 import { Spinner, PageLoader } from "@/components/ui/spinner"
 import { ImageSlot } from "@/components/ui/image-slot"
+import { serviceImg } from "@/lib/images"
 import { DangerBadge, BookingStatusBadge } from "@/components/StatusBadge"
 
 const ROOM_LABEL: Record<string, string> = { Standard: "標準房", Deluxe: "豪華房" }
@@ -146,7 +147,7 @@ export default function ServiceDetailPage() {
     <div className="pb-28">
       {/* A3 hero */}
       <div className="relative">
-        <ImageSlot className="h-[240px] w-full" rounded="rounded-none" />
+        <ImageSlot src={serviceImg(service)} className="h-[240px] w-full" rounded="rounded-none" />
         <button
           type="button"
           onClick={() => nav(-1)}

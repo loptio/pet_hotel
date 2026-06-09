@@ -13,6 +13,7 @@ import { useAuth } from "@/auth/AuthContext"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ImageSlot } from "@/components/ui/image-slot"
+import { OWNER_AVATAR_IMG } from "@/lib/images"
 
 export default function MePage() {
   const { account, logout } = useAuth()
@@ -35,7 +36,7 @@ export default function MePage() {
 
       {/* profile header */}
       <Card className="flex items-center gap-4 p-4">
-        <ImageSlot className="size-16 shrink-0" rounded="rounded-full" />
+        <ImageSlot src={OWNER_AVATAR_IMG} className="size-16 shrink-0" rounded="rounded-full" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-lg font-semibold">{account?.displayName ?? "—"}</p>
           <p className="num truncate text-sm text-muted-foreground">{account?.email ?? "—"}</p>

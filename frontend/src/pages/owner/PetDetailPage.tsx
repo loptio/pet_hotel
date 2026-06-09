@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/alert"
 import { PageLoader } from "@/components/ui/spinner"
 import { EmptyState } from "@/components/ui/empty"
 import { ImageSlot } from "@/components/ui/image-slot"
+import { petImg } from "@/lib/images"
 import { DangerBadge, VaccinationBadge } from "@/components/StatusBadge"
 
 function ageYears(birthDate?: string | null): number | null {
@@ -85,7 +86,7 @@ export default function PetDetailPage() {
 
       {/* Header */}
       <header className="flex items-center gap-4">
-        <ImageSlot className="size-[72px] shrink-0" rounded="rounded-full" />
+        <ImageSlot src={petImg(pet)} className="size-[72px] shrink-0" rounded="rounded-full" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl font-bold">{pet.name}</h1>

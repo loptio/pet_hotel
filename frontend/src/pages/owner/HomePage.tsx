@@ -12,6 +12,7 @@ import { Alert } from "@/components/ui/alert"
 import { PageLoader } from "@/components/ui/spinner"
 import { EmptyState } from "@/components/ui/empty"
 import { ImageSlot } from "@/components/ui/image-slot"
+import { HERO_IMG, serviceImg } from "@/lib/images"
 
 const ROOM_LABEL: Record<string, string> = { Standard: "標準房", Deluxe: "豪華房" }
 const GROOM_LABEL: Record<string, string> = { Basic: "基礎", Full: "完整" }
@@ -41,7 +42,7 @@ export default function HomePage() {
     <div className="space-y-5 pb-6">
       {/* Hero */}
       <div className="relative h-[210px] w-full overflow-hidden">
-        <ImageSlot className="absolute inset-0 size-full" rounded="rounded-none" />
+        <ImageSlot src={HERO_IMG} className="absolute inset-0 size-full" rounded="rounded-none" />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/75 via-foreground/25 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5 text-primary-foreground">
           <p className="text-sm font-medium opacity-90">午安，{account?.displayName ?? "貴賓"}</p>
@@ -154,7 +155,7 @@ function ServiceCard({ service, onClick }: { service: ServiceItemOut; onClick: (
       className="flex cursor-pointer items-stretch gap-3 overflow-hidden p-3 transition-colors hover:border-primary"
       onClick={onClick}
     >
-      <ImageSlot className="size-[88px] shrink-0" />
+      <ImageSlot src={serviceImg(service)} className="size-[88px] shrink-0" />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-start justify-between gap-2">
           <span className="truncate font-semibold">{service.name}</span>

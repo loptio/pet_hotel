@@ -16,6 +16,7 @@ import { Alert } from "@/components/ui/alert"
 import { Overlay } from "@/components/ui/overlay"
 import { Spinner, PageLoader } from "@/components/ui/spinner"
 import { ImageSlot } from "@/components/ui/image-slot"
+import { groomPhoto } from "@/lib/images"
 import { WorkStatusBadge } from "@/components/StatusBadge"
 
 const CONFLICT_MSG = "狀態已變更，請重新整理"
@@ -167,8 +168,8 @@ export default function WorkOrderDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-2">
-                {photos.map((p) => (
-                  <ImageSlot key={p.id} className="aspect-square" label={p.uploadedAt ? fmtDate(p.uploadedAt) : undefined} />
+                {photos.map((p, i) => (
+                  <ImageSlot key={p.id} src={groomPhoto(i)} className="aspect-square" label={p.uploadedAt ? fmtDate(p.uploadedAt) : undefined} />
                 ))}
                 {/* 補滿空位（最少顯示 3 格） */}
                 {Array.from({ length: Math.max(0, 2 - photos.length) }).map((_, i) => (
